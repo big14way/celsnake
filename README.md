@@ -1,12 +1,18 @@
-Celo Snake - Play-to-Earn Game
+# Celo Snake - Play-to-Earn Game
 
 A mobile-first, blockchain-based snake dice game built on **Celo** with **MiniPay** support. Roll the dice, avoid the snakes, collect multipliers, and earn CELO!
 
 **Live Demo:** [https://celo-snake.vercel.app](https://celo-snake.vercel.app)
 
-## =� Table of Contents
+---
+
+## 📖 Table of Contents
 
 - [Overview](#overview)
+- [Problem We're Solving](#problem-were-solving)
+- [Our Solution](#our-solution)
+- [Mission Summary](#mission-summary)
+- [Why Celo?](#why-celo)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
@@ -16,21 +22,33 @@ A mobile-first, blockchain-based snake dice game built on **Celo** with **MiniPa
 - [Game Rules](#game-rules)
 - [MiniPay Integration](#minipay-integration)
 - [Project Structure](#project-structure)
+- [Demo Video](#demo-video)
+- [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Support](#support)
+- [Roadmap](#roadmap)
 
-## <� Overview
+---
 
-Celo Snake is a play-to-earn gaming dApp built for the Celo Hackathon. Players place bets, roll dice to move across a 5x5 board, collect multipliers, and cash out their winnings - all on the Celo blockchain.
+## 📝 Overview
+
+Celo Snake is a play-to-earn gaming dApp built for the Celo Hackathon. Players place bets, roll dice to move across a 5x5 board, collect multipliers, and cash out their winnings - all on the Celo blockchain! The game is designed for mobile, prioritizes fast onboarding, low transaction fees, and fair, transparent gameplay.
+
+---
 
 ## 🎯 Problem We're Solving
 
-The traditional gaming industry lacks transparency and fair monetization for players. Centralized platforms control player earnings, impose high fees, and provide no real ownership of in-game assets. Additionally, blockchain gaming often faces barriers to entry:
+The traditional gaming industry lacks transparency and fair monetization for players. Centralized platforms control player earnings, impose high fees, and provide no real ownership of in-game assets.
 
-- **High Complexity:** Most blockchain games require extensive crypto knowledge
-- **Poor Mobile Experience:** Limited mobile-first blockchain gaming options
-- **Expensive Transactions:** High gas fees make micro-transactions unfeasible
-- **Limited Accessibility:** Difficult onboarding for newcomers to Web3
+**Key Issues:**
+- *High Complexity*: Most blockchain games require extensive crypto knowledge
+- *Poor Mobile Experience*: Limited mobile-first blockchain gaming options
+- *Expensive Transactions*: High gas fees make micro-transactions unfeasible
+- *Limited Accessibility*: Difficult onboarding for newcomers to Web3
+
+---
 
 ## 💡 Our Solution
 
@@ -42,6 +60,8 @@ Celo Snake addresses these challenges by leveraging Celo's mobile-first blockcha
 - **Low-Cost Transactions:** Celo's efficient L2 enables affordable gameplay
 - **Easy Onboarding:** Simple wallet connection via WalletConnect & RainbowKit
 - **Instant Payouts:** Cash out anytime with immediate on-chain settlements
+
+---
 
 ## 🚀 Mission Summary
 
@@ -55,25 +75,31 @@ Our mission is to make blockchain gaming accessible, fair, and fun for everyone.
 
 We believe gaming should reward players for their time and skill, and Celo's technology makes this vision achievable at scale.
 
-### Why Celo?
+---
+
+## 🌱 Why Celo?
 
 - **Mobile-First:** Optimized for mobile users with MiniPay integration
 - **Fast & Cheap:** Low transaction fees and quick confirmations
 - **Accessible:** Easy onboarding for users new to crypto
 - **Sustainable:** Built on a carbon-negative blockchain
 
-## ( Features
+---
 
-- <� **Dice-Based Gameplay:** Roll two dice to move across the board
-- =� **Play-to-Earn:** Win CELO by avoiding snakes and collecting multipliers
-- =� **MiniPay Support:** Seamless integration with Celo's mobile wallet
-- = **WalletConnect:** Connect with any Web3 wallet via RainbowKit
-- <� **Leaderboard:** Compete with other players
-- <� **Multiple Difficulty Levels:** Easy, Medium, Hard, Expert, Master
-- =� **Game State Persistence:** Resume your game anytime
-- =� **Game History:** Track all your past games
+## 🕹️ Features
 
-## =� Tech Stack
+- **Dice-Based Gameplay:** Roll two dice to move across the board
+- **Play-to-Earn:** Win CELO by avoiding snakes and collecting multipliers
+- **MiniPay Support:** Seamless integration with Celo's mobile wallet
+- **WalletConnect:** Connect with any Web3 wallet via RainbowKit
+- **Leaderboard:** Compete with other players
+- **Multiple Difficulty Levels:** Easy, Medium, Hard, Expert, Master
+- **Game State Persistence:** Resume your game anytime
+- **Game History:** Track all your past games
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
 - **React 18** - UI library
@@ -92,7 +118,9 @@ We believe gaming should reward players for their time and skill, and Celo's tec
 - **WalletConnect** - Multi-wallet support
 - **MiniPay** - Celo's mobile wallet
 
-## =� Getting Started
+---
+
+## 🚦 Getting Started
 
 ### Prerequisites
 
@@ -102,33 +130,27 @@ We believe gaming should reward players for their time and skill, and Celo's tec
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/big14way/celsnake.git
-   cd celsnake
-   ```
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/big14way/celsnake.git
+    cd celsnake
+    ```
+2. **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3. **Set up environment variables:**
+    ```bash
+    cp .env.example .env
+    ```
+    Then edit `.env` with your values (see [Environment Variables](#environment-variables))
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+4. **Start the development server:**
+    ```bash
+    npm run dev
+    ```
 
-3. **Set up environment variables**
-
-   Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-
-   Then edit `.env` with your values (see [Environment Variables](#environment-variables))
-
-4. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser**
-
+5. **Open your browser:**
    Navigate to `http://localhost:5173`
 
 ### Building for Production
@@ -136,7 +158,6 @@ We believe gaming should reward players for their time and skill, and Celo's tec
 ```bash
 npm run build
 ```
-
 The built files will be in the `dist/` directory.
 
 ### Preview Production Build
@@ -145,9 +166,11 @@ The built files will be in the `dist/` directory.
 npm run preview
 ```
 
-## = Environment Variables
+---
 
-Create a `.env` file in the root directory with the following variables:
+## 🔑 Environment Variables
+
+Create a `.env` file in the root directory with the following:
 
 ```env
 # WalletConnect Project ID (get from https://cloud.walletconnect.com/)
@@ -169,46 +192,43 @@ VITE_NETWORK=testnet
 4. Copy your Project ID
 5. Paste it into your `.env` file
 
-## =� Deployment
+---
+
+## 🚚 Deployment
 
 ### Deploy to Vercel
 
-1. **Install Vercel CLI**
-   ```bash
-   npm i -g vercel
-   ```
-
-2. **Deploy**
-   ```bash
-   vercel
-   ```
-
-3. **Add Environment Variables**
-
-   In your Vercel dashboard, add the environment variables from `.env`
+1. **Install Vercel CLI:**
+    ```bash
+    npm i -g vercel
+    ```
+2. **Deploy:**
+    ```bash
+    vercel
+    ```
+3. **Add Environment Variables:**  
+   In your Vercel dashboard, add the environment variables from `.env`.
 
 ### Deploy to Netlify
 
-1. **Install Netlify CLI**
-   ```bash
-   npm i -g netlify-cli
-   ```
+1. **Install Netlify CLI:**
+    ```bash
+    npm i -g netlify-cli
+    ```
+2. **Build the project:**
+    ```bash
+    npm run build
+    ```
+3. **Deploy:**
+    ```bash
+    netlify deploy --prod
+    ```
+4. **Add Environment Variables:**  
+   In your Netlify dashboard, add the environment variables from `.env`.
 
-2. **Build the project**
-   ```bash
-   npm run build
-   ```
+---
 
-3. **Deploy**
-   ```bash
-   netlify deploy --prod
-   ```
-
-4. **Add Environment Variables**
-
-   In your Netlify dashboard, add the environment variables from `.env`
-
-## =� Smart Contract
+## ✨ Smart Contract
 
 The game uses a Solidity smart contract deployed on Celo.
 
@@ -217,95 +237,94 @@ The game uses a Solidity smart contract deployed on Celo.
 - **Celo Sepolia Testnet:** `0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc`
 - **Celo Mainnet:** TBD
 
-**Block Explorer:**
-- View on Celo Explorer: [https://explorer.celo.org/alfajores/address/0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc](https://explorer.celo.org/alfajores/address/0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc)
+**Block Explorer:**  
+View on Celo Explorer: [Testnet Contract](https://explorer.celo.org/alfajores/address/0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc)
 
 ### Contract Features
 
--  Place bets in CELO
--  Cash out winnings
--  Reset active bets
--  Change nickname
--  View leaderboard
--  Get contract balance
+- Place bets in CELO
+- Cash out winnings
+- Reset active bets
+- Change nickname
+- View leaderboard
+- Get contract balance
 
 ### Deploying the Contract
 
-1. **Navigate to contracts directory**
-   ```bash
-   cd contracts
-   ```
-
-2. **Install Hardhat** (if not already installed)
-   ```bash
-   npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
-   ```
-
-3. **Create deployment script**
-
+1. **Navigate to contracts directory:**
+    ```bash
+    cd contracts
+    ```
+2. **Install Hardhat (if not already):**
+    ```bash
+    npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
+    ```
+3. **Create deployment script:**  
    Create `scripts/deploy.js`:
-   ```javascript
-   async function main() {
-     const SnakesGame = await ethers.getContractFactory("SnakesGame");
-     const game = await SnakesGame.deploy();
-     await game.deployed();
-     console.log("SnakesGame deployed to:", game.address);
-   }
 
-   main().catch((error) => {
-     console.error(error);
-     process.exitCode = 1;
-   });
-   ```
+    ```javascript
+    async function main() {
+      const SnakesGame = await ethers.getContractFactory("SnakesGame");
+      const game = await SnakesGame.deploy();
+      await game.deployed();
+      console.log("SnakesGame deployed to:", game.address);
+    }
 
-4. **Configure Hardhat for Celo**
+    main().catch((error) => {
+      console.error(error);
+      process.exitCode = 1;
+    });
+    ```
 
+4. **Configure Hardhat for Celo:**  
    Update `hardhat.config.js`:
-   ```javascript
-   require("@nomicfoundation/hardhat-toolbox");
 
-   module.exports = {
-     solidity: "0.8.20",
-     networks: {
-       alfajores: {
-         url: "https://alfajores-forno.celo-testnet.org",
-         accounts: [process.env.PRIVATE_KEY],
-         chainId: 44787,
-       },
-       celo: {
-         url: "https://forno.celo.org",
-         accounts: [process.env.PRIVATE_KEY],
-         chainId: 42220,
-       },
-     },
-   };
-   ```
+    ```javascript
+    require("@nomicfoundation/hardhat-toolbox");
 
-5. **Deploy to Alfajores Testnet**
-   ```bash
-   npx hardhat run scripts/deploy.js --network alfajores
-   ```
+    module.exports = {
+      solidity: "0.8.20",
+      networks: {
+        alfajores: {
+          url: "https://alfajores-forno.celo-testnet.org",
+          accounts: [process.env.PRIVATE_KEY],
+          chainId: 44787,
+        },
+        celo: {
+          url: "https://forno.celo.org",
+          accounts: [process.env.PRIVATE_KEY],
+          chainId: 42220,
+        },
+      },
+    };
+    ```
 
-6. **Update contract address**
+5. **Deploy to Alfajores Testnet:**
+    ```bash
+    npx hardhat run scripts/deploy.js --network alfajores
+    ```
 
-   Copy the deployed contract address and update it in `.env`:
-   ```env
-   VITE_CONTRACT_ADDRESS=0x...
-   ```
+6. **Update contract address:**  
+   Copy the deployed address and update your `.env`:
 
-## <� Game Rules
+    ```env
+    VITE_CONTRACT_ADDRESS=0x...
+    ```
+
+---
+
+## 🎲 Game Rules
 
 ### How to Play
 
 1. **Connect your wallet**
 2. **Enter a nickname**
 3. **Choose difficulty level:**
-   - Easy: Fewer snakes, more multipliers
-   - Medium: Balanced gameplay
-   - Hard: More snakes, higher multipliers
-   - Expert: Very challenging
-   - Master: Extreme difficulty
-
+    - Easy: Fewer snakes, more multipliers
+    - Medium: Balanced gameplay
+    - Hard: More snakes, higher multipliers
+    - Expert: Very challenging
+    - Master: Extreme difficulty
 4. **Place your bet** (minimum 0.01 CELO)
 5. **Roll the dice** (up to 5 times per game)
 6. **Land on multipliers** to increase your winnings
@@ -316,22 +335,25 @@ The game uses a Solidity smart contract deployed on Celo.
 
 - **Standard multipliers:** 1.2x, 1.5x, 1.8x
 - **Power multiplier:** 2x (stacks exponentially!)
-- Your total multiplier is calculated as:
-  ```
-  Total = (1 + sum of non-2x multipliers) + (2^count of 2x multipliers) - 1
-  ```
 
-  Example:
-  - Collect 1.5x + 2x + 1.2x
-  - Total = (1 + 0.5 + 0.2) + (2^1) - 1 = 2.7x
+Your total multiplier is calculated as:
+```
+Total = (1 + sum of non-2x multipliers) + (2^count of 2x multipliers) - 1
+```
+
+Example:
+- Collect 1.5x + 2x + 1.2x
+- Total = (1 + 0.5 + 0.2) + (2^1) - 1 = 2.7x
 
 ### Winning Formula
 
 ```
-Profit = Bet Amount � Total Multiplier
+Profit = Bet Amount × Total Multiplier
 ```
 
-## =� MiniPay Integration
+---
+
+## 📱 MiniPay Integration
 
 MiniPay is Celo's mobile-first wallet built into Opera Mini browser.
 
@@ -349,49 +371,54 @@ MiniPay is Celo's mobile-first wallet built into Opera Mini browser.
 3. Navigate to your deployed dApp URL
 4. The app will automatically connect to MiniPay
 
-### For Development
+#### For Local Development
 
 Test MiniPay integration by setting:
 ```javascript
 window.ethereum.isMiniPay = true;
 ```
 
-## =� Project Structure
+---
+
+## 📁 Project Structure
 
 ```
 celo-snake-game/
-   contracts/              # Smart contracts
-      SnakesGame.sol     # Main game contract
-   public/                # Static assets
-      sounds/           # Game sound effects
-      favicon.ico
-   src/
-      components/        # React components
-         App.tsx       # Main app wrapper
-         GameContainer.tsx  # Game logic & state
-         GameBoard.tsx      # Visual game board
-         BetPanel.tsx       # Betting interface
-         Leaderboard.tsx    # Player rankings
-      utils/             # Utility functions
-         contract.ts    # Contract interactions
-         gameLogic.ts   # Game mechanics
-      wagmi.config.ts    # Wagmi & RainbowKit config
-      vite-env.d.ts      # TypeScript env definitions
-      main.tsx           # App entry point
-      index.css          # Global styles
-   .env                   # Environment variables (gitignored)
-   .env.example           # Environment template
-   .gitignore             # Git ignore rules
-   package.json           # Dependencies
-   tsconfig.json          # TypeScript config
-   vite.config.ts         # Vite config
-   tailwind.config.js     # Tailwind CSS config
-   README.md              # This file
+│
+├── contracts/              # Smart contracts
+│   └── SnakesGame.sol      # Main game contract
+├── public/                 # Static assets
+│   └── sounds/             # Game sound effects
+│   └── favicon.ico
+├── src/
+│   ├── components/         # React components
+│   │   ├── App.tsx
+│   │   ├── GameContainer.tsx
+│   │   ├── GameBoard.tsx
+│   │   ├── BetPanel.tsx
+│   │   └── Leaderboard.tsx
+│   ├── utils/              # Utility functions
+│   │   ├── contract.ts     # Contract interactions
+│   │   └── gameLogic.ts    # Game mechanics
+│   ├── wagmi.config.ts     # Wagmi & RainbowKit config
+│   ├── vite-env.d.ts       # TypeScript env definitions
+│   ├── main.tsx            # App entry point
+│   └── index.css           # Global styles
+├── .env                    # Environment variables (gitignored)
+├── .env.example            # Environment template
+├── .gitignore              # Git ignore rules
+├── package.json            # Dependencies
+├── tsconfig.json           # TypeScript config
+├── vite.config.ts          # Vite config
+├── tailwind.config.js      # Tailwind CSS config
+└── README.md               # This file
 ```
 
-## <� Demo Video
+---
 
-[Create a 4-minute demo video showing:]
+## 📺 Demo Video
+
+**Recommended steps for your demo:**
 
 1. Connecting wallet
 2. Setting nickname
@@ -401,7 +428,9 @@ celo-snake-game/
 6. Viewing the leaderboard
 7. MiniPay integration (if applicable)
 
-## >� Testing
+---
+
+## 🧪 Testing
 
 ### Manual Testing Checklist
 
@@ -429,7 +458,9 @@ Test on both networks:
   - Chain ID: 42220
   - RPC: https://forno.celo.org
 
-## > Contributing
+---
+
+## 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -439,24 +470,32 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## =� License
+---
+
+## 📝 License
 
 This project is licensed under the MIT License.
 
-## =O Acknowledgments
+---
+
+## 🙌 Acknowledgments
 
 - **Celo Team** - For the amazing blockchain and hackathon
 - **Rainbow** - For RainbowKit wallet connector
 - **WalletConnect** - For multi-wallet support
 - **Viem Team** - For the excellent Ethereum library
 
-## =� Support
+---
+
+## 💬 Support
 
 - **Issues:** [GitHub Issues](https://github.com/big14way/celsnake/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/big14way/celsnake/discussions)
 - **Twitter:** [@big14teru]
 
-## <� Roadmap
+---
+
+## 🗺️ Roadmap
 
 - [x] Basic game mechanics
 - [x] Smart contract deployment
@@ -471,6 +510,8 @@ This project is licensed under the MIT License.
 
 ---
 
-Built with d for the Celo Hackathon 2025
+Built with ❤️ for the Celo Hackathon 2025
 
 **Made possible by:** Celo, WalletConnect, RainbowKit, Viem, React, & the Web3 community
+
+```
