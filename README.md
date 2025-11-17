@@ -1,5 +1,4 @@
-# =
- Celo Snake - Play-to-Earn Game
+Celo Snake - Play-to-Earn Game
 
 A mobile-first, blockchain-based snake dice game built on **Celo** with **MiniPay** support. Roll the dice, avoid the snakes, collect multipliers, and earn CELO!
 
