@@ -62,5 +62,14 @@ jspm_packages/
 .yarn-integrity
 
 # dotenv environment variables file
-.env 
+.env
 .vercel
+
+# Hardhat files
+cache/
+artifacts/
+typechain-types/
+
+# Private keys
+*.key
+private-key.txt

@@ -1,5 +1,5 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { celo, celoAlfajores } from 'wagmi/chains';
+import { celo, celoSepolia } from 'wagmi/chains';
 
 const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
 
@@ -13,8 +13,8 @@ const isTestnet = import.meta.env.VITE_NETWORK === 'testnet';
 export const config = getDefaultConfig({
   appName: 'Celo Snake Game',
   projectId,
-  chains: isTestnet ? [celoAlfajores] : [celo, celoAlfajores],
+  chains: isTestnet ? [celoSepolia] : [celo, celoSepolia],
   ssr: false,
 });
 
-export const CURRENT_CHAIN = isTestnet ? celoAlfajores : celo;
+export const CURRENT_CHAIN = isTestnet ? celoSepolia : celo;
