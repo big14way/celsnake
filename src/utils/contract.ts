@@ -310,11 +310,11 @@ export const CELO_NETWORK_INFO = {
 // Utility functions for parsing/formatting ether
 export { parseEther, formatEther };
 
-// Check if running in MiniPay
-export const isMiniPay = typeof window !== 'undefined' && (window as any).ethereum?.isMiniPay;
-
 // Contract config for wagmi hooks
 export const contractConfig = {
   address: CONTRACT_ADDRESS,
   abi: CONTRACT_ABI,
 } as const;
+
+// Re-export MiniPay utilities for backward compatibility
+export { isMiniPay } from './minipay';

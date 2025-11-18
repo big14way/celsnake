@@ -334,28 +334,115 @@ Profit = Bet Amount � Total Multiplier
 
 ## =� MiniPay Integration
 
-MiniPay is Celo's mobile-first wallet built into Opera Mini browser.
+**MiniPay** is Celo's mobile-first stablecoin wallet with 10M+ activated addresses. Our game is fully optimized for MiniPay users!
 
-### Features
+### 🎯 MiniPay Features
 
-- **Auto-detection:** The app automatically detects if running in MiniPay
-- **Hidden Connect Button:** Wallet connection is automatic in MiniPay
-- **Mobile-Optimized UI:** Touch-friendly buttons and responsive design
-- **cUSD Gas Payments:** Pay transaction fees in stablecoins
+#### 1. **Auto-Detection & Connection**
+- Automatically detects MiniPay environment
+- No connect button needed (seamless auto-connect)
+- Shows beautiful "MiniPay Mode" badge
 
-### Testing in MiniPay
+#### 2. **Deeplink Support** 🔗
+Share direct links to pre-configure the game:
 
-1. Download Opera Mini on your mobile device
-2. Enable MiniPay in settings
-3. Navigate to your deployed dApp URL
-4. The app will automatically connect to MiniPay
-
-### For Development
-
-Test MiniPay integration by setting:
-```javascript
-window.ethereum.isMiniPay = true;
 ```
+https://celo-snake.vercel.app/?bet=0.5&difficulty=hard&nickname=Player1
+```
+
+**Supported Parameters:**
+- `bet` - Pre-fill bet amount (e.g., `?bet=0.5`)
+- `difficulty` - Pre-select difficulty: `easy`, `medium`, `hard`, `expert`, `master`
+- `nickname` - Pre-fill nickname
+- `autoConnect` - Auto-connect wallet on load
+
+**Examples:**
+```bash
+# High roller link
+?bet=1.0&difficulty=master
+
+# Beginner link
+?bet=0.01&difficulty=easy&nickname=Newbie
+
+# Tournament link
+?bet=0.5&difficulty=hard&autoConnect=true
+```
+
+#### 3. **cUSD Fee Payments** 💰
+- MiniPay users can pay transaction fees in **cUSD** (stablecoin)
+- No need to hold native CELO for gas
+- Perfect for emerging markets
+
+#### 4. **Mobile-Optimized UX** 📱
+- **Larger Touch Targets:** Bigger buttons for easier tapping
+- **Haptic Feedback:** Feel the dice roll and cashout
+- **Responsive Design:** Optimized spacing for mobile screens
+- **Shortened Addresses:** Cleaner display on small screens
+- **Smooth Animations:** Active button press effects
+
+#### 5. **Share Wins** 🎉
+- Share your big wins via Web Share API
+- Works with WhatsApp, Twitter, Facebook, etc.
+- Fallback to clipboard on desktop
+
+#### 6. **Persistent Storage** 💾
+- Game state survives app backgrounding
+- Never lose your progress
+- Auto-requests persistent storage permission
+
+#### 7. **PWA Support** 
+- Installable as a Progressive Web App
+- Full screen mode on mobile
+- App-like experience
+
+### 📲 Install MiniPay
+
+- **Android:** [Google Play Store](https://play.google.com/store/apps/details?id=com.opera.minipay)
+- **iOS:** [App Store](https://apps.apple.com/de/app/minipay-easy-global-wallet/id6504087257)
+- **Opera Mini:** Built-in (enable in settings)
+
+### 🧪 Testing MiniPay Integration
+
+See **[MINIPAY_TESTING.md](./MINIPAY_TESTING.md)** for comprehensive testing guide.
+
+**Quick Test (Browser):**
+```javascript
+// Simulate MiniPay in dev console
+window.ethereum = window.ethereum || {};
+window.ethereum.isMiniPay = true;
+location.reload();
+```
+
+**Quick Test (Mobile):**
+1. Deploy to Vercel: `npm run build && vercel`
+2. Open in MiniPay app
+3. Test deeplink: `https://your-app.vercel.app/?bet=0.5&difficulty=hard`
+
+### 🎮 Using Deeplinks for Marketing
+
+**Tournament Mode:**
+```
+https://celo-snake.vercel.app/?bet=0.5&difficulty=expert&nickname=Tournament
+```
+
+**Beginner Friendly:**
+```
+https://celo-snake.vercel.app/?bet=0.01&difficulty=easy
+```
+
+**High Roller:**
+```
+https://celo-snake.vercel.app/?bet=5.0&difficulty=master
+```
+
+Share these links on social media to onboard users directly into specific game modes!
+
+### 📚 MiniPay Resources
+
+- [MiniPay Overview](https://docs.celo.org/build-on-celo/build-on-minipay/overview)
+- [MiniPay Quickstart](https://docs.celo.org/build-on-celo/build-on-minipay/quickstart)
+- [MiniPay Code Library](https://docs.celo.org/build-on-celo/build-on-minipay/code-library)
+- [MiniPay Deeplinks](https://docs.celo.org/build-on-celo/build-on-minipay/deeplinks)
 
 ## =� Project Structure
 

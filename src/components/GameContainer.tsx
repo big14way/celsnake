@@ -5,7 +5,15 @@ import BetPanel from './BetPanel';
 import GameBoard from './GameBoard';
 import Leaderboard from './Leaderboard';
 import { generateBoard, generatePath, BoardCell } from '../utils/gameLogic';
-import { contractConfig, parseEther, formatEther, isMiniPay, CELO_NETWORK_INFO } from '../utils/contract';
+import { contractConfig, parseEther, formatEther, CELO_NETWORK_INFO } from '../utils/contract';
+import { 
+  isMiniPay, 
+  parseDeeplinkParams, 
+  triggerHaptic, 
+  shareGame,
+  requestPersistentStorage,
+  formatAddressForMobile
+} from '../utils/minipay';
 
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -70,6 +78,9 @@ const GameContainer = () => {
   const { address, isConnected, chain } = useAccount();
   const { data: balanceData } = useBalance({ address });
   
+  // Check if running in MiniPay
+  const miniPayActive = isMiniPay();
+  
   const [nickname, setNickname] = useState('');
   const [bet, setBet] = useState('');
   const [difficulty, setDifficulty] = useState<'easy'|'medium'|'hard'|'expert'|'master'>('easy');
@@ -109,6 +120,31 @@ const GameContainer = () => {
   });
 
   const isWrongNetwork = isConnected && chain?.id !== CELO_NETWORK_INFO.chainId;
+
+  // Handle deeplink parameters (MiniPay)
+  useEffect(() => {
+    const params = parseDeeplinkParams();
+    
+    if (params.bet) {
+      setBet(params.bet);
+    }
+    
+    if (params.difficulty) {
+      setDifficulty(params.difficulty);
+    }
+    
+    if (params.nickname) {
+      setInputNickname(params.nickname);
+      setNickname(params.nickname);
+    }
+  }, []);
+
+  // Request persistent storage for MiniPay
+  useEffect(() => {
+    if (miniPayActive) {
+      requestPersistentStorage();
+    }
+  }, [miniPayActive]);
 
   useEffect(() => {
     if (address) {
@@ -306,6 +342,12 @@ const GameContainer = () => {
   const handleRoll = async () => {
     if (!gameActive || !path || !board || rolling) return;
     setRolling(true);
+    
+    // Haptic feedback for mobile/MiniPay
+    if (miniPayActive) {
+      triggerHaptic('medium');
+    }
+    
     try { new Audio('/sounds/Roll.mp3').play(); } catch {}
     
     let final1 = getRandomInt(1, 6);
@@ -336,6 +378,11 @@ const GameContainer = () => {
     setGameActive(false);
     setTxStatus('Cashing out...');
     setCashoutPending(true);
+    
+    // Haptic feedback for mobile/MiniPay
+    if (miniPayActive) {
+      triggerHaptic('heavy');
+    }
     
     try {
       const roundedProfit = Number(profit).toFixed(3);
@@ -372,6 +419,16 @@ const GameContainer = () => {
     }
   };
 
+  const handleShare = async () => {
+    const appUrl = window.location.origin;
+    const success = await shareGame(step, profit.toFixed(3), appUrl);
+    
+    if (success) {
+      setTxStatus('Shared successfully!');
+      setTimeout(() => setTxStatus(null), 2000);
+    }
+  };
+
   const difficultyLabels: Record<string, string> = {
     easy: 'Easy',
     medium: 'Medium',
@@ -391,17 +448,18 @@ const GameContainer = () => {
         </div>
       )}
 
-      {isMiniPay && (
+      {miniPayActive && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-bold">
-            Running in MiniPay! 📱
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-bold flex items-center gap-2">
+            <span>📱</span>
+            <span>MiniPay Mode</span>
           </div>
         </div>
       )}
       
-      <div className="w-full max-w-5xl p-8 flex flex-row items-start gap-12">
+      <div className={`w-full max-w-5xl ${miniPayActive ? 'p-4' : 'p-8'} flex flex-row items-start gap-12`}>
         <div className="flex flex-col items-center w-full max-w-xs">
-          {!isMiniPay && (
+          {!miniPayActive && (
             <div className="mb-4">
               <ConnectButton />
             </div>
@@ -451,7 +509,7 @@ const GameContainer = () => {
           </div>
           {address && (
             <div className="mb-2 text-xs text-gray-400">
-              {address.slice(0, 5)}...{address.slice(-5)}
+              {miniPayActive ? formatAddressForMobile(address) : `${address.slice(0, 5)}...${address.slice(-5)}`}
             </div>
           )}
           <div className="mb-4 text-2xl font-bold text-yellow-300">
@@ -491,18 +549,29 @@ const GameContainer = () => {
               {gameActive && (
                 <div className="flex gap-4 mt-6">
                   <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded text-lg disabled:opacity-50"
+                    className={`bg-blue-500 hover:bg-blue-600 active:scale-95 transition-transform text-white font-bold ${miniPayActive ? 'py-3 px-8 text-xl' : 'py-2 px-6 text-lg'} rounded disabled:opacity-50`}
                     onClick={handleRoll}
                     disabled={step >= 5 || lost || rolling || isPending}
                   >
-                    {rolling ? 'Rolling...' : 'Roll'}
+                    {rolling ? 'Rolling...' : 'Roll 🎲'}
                   </button>
                   <button
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded text-lg disabled:opacity-50"
+                    className={`bg-green-500 hover:bg-green-600 active:scale-95 transition-transform text-white font-bold ${miniPayActive ? 'py-3 px-8 text-xl' : 'py-2 px-6 text-lg'} rounded disabled:opacity-50`}
                     onClick={handleCashout}
                     disabled={step === 0 || lost || rolling || cashoutPending || isPending}
                   >
-                    {cashoutPending || isPending ? 'Processing...' : 'Cashout'}
+                    {cashoutPending || isPending ? 'Processing...' : 'Cashout 💰'}
+                  </button>
+                </div>
+              )}
+              
+              {!gameActive && profit > 0 && (
+                <div className="mt-4">
+                  <button
+                    className={`bg-purple-500 hover:bg-purple-600 active:scale-95 transition-transform text-white font-bold ${miniPayActive ? 'py-3 px-8 text-lg' : 'py-2 px-6 text-base'} rounded`}
+                    onClick={handleShare}
+                  >
+                    Share Win 🎉
                   </button>
                 </div>
               )}

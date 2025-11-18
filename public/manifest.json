@@ -1,0 +1,46 @@
+{
+  "name": "Celo Snake - Play to Earn",
+  "short_name": "Celo Snake",
+  "description": "Play-to-earn snake dice game on Celo blockchain with instant CELO rewards",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a2332",
+  "theme_color": "#1a2332",
+  "orientation": "portrait",
+  "scope": "/",
+  "categories": ["games", "entertainment", "finance"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "minipay": {
+    "supported": true,
+    "version": "1.0.0",
+    "category": "games",
+    "featured": true,
+    "tags": ["play-to-earn", "dice", "snake", "gaming"],
+    "minVersion": "1.0.0",
+    "permissions": ["web3", "wallet"]
+  },
+  "celo": {
+    "network": "celo",
+    "contracts": {
+      "game": "0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc"
+    }
+  }
+}
