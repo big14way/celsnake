@@ -367,19 +367,6 @@ Profit = Bet Amount × Total Multiplier
 #### 2. **Deeplink Support** 🔗
 Share direct links to pre-configure the game:
 
-<<<<<<< HEAD
-=======
-1. Download Opera Mini on your mobile device
-2. Enable MiniPay in settings
-3. Navigate to your deployed dApp URL
-4. The app will automatically connect to MiniPay
-
-#### For Local Development
-
-Test MiniPay integration by setting:
-```javascript
-window.ethereum.isMiniPay = true;
->>>>>>> ba2050632f11925159e948da0e9d14c4c1df3e5d
 ```
 https://celo-snake.vercel.app/?bet=0.5&difficulty=hard&nickname=Player1
 ```
