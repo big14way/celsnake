@@ -45,6 +45,11 @@ const MultiplayerGame: React.FC = () => {
     if (!gameHistory.length || !path || !board) return;
 
     const latestMove = gameHistory[gameHistory.length - 1];
+
+    // Update dice display with actual values from the move
+    setDice1(latestMove.dice1);
+    setDice2(latestMove.dice2);
+
     animateMove(latestMove.player, latestMove.dice1, latestMove.dice2);
   }, [gameHistory]);
 
@@ -95,22 +100,20 @@ const MultiplayerGame: React.FC = () => {
     setRolling(true);
     triggerHaptic('medium');
 
-    // Animate dice
+    // Animate dice rolling
     for (let i = 0; i < 10; i++) {
       setDice1(getRandomInt(1, 6));
       setDice2(getRandomInt(1, 6));
       await new Promise(res => setTimeout(res, 60));
     }
 
-    const final1 = getRandomInt(1, 6);
-    const final2 = getRandomInt(1, 6);
-    
-    setDice1(final1);
-    setDice2(final2);
-    setStep(s => s + 1);
-
-    // Send to server
-    rollDice(final1, final2);
+    // Execute commit-reveal dice roll (this now handles everything)
+    try {
+      await rollDice();
+      setStep(s => s + 1);
+    } catch (error) {
+      console.error('Failed to roll dice:', error);
+    }
 
     setRolling(false);
   };

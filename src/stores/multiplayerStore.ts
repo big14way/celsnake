@@ -1,13 +1,15 @@
 /**
  * Multiplayer State Management with Zustand
+ * Enhanced with commit-reveal pattern and toast notifications
  */
 
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
+import toast from 'react-hot-toast';
 import type { MultiplayerState, Room, GameMove, CreateRoomParams } from '../types/multiplayer';
+import { rollAndCommitDice } from '../utils/diceCommitReveal';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 
-  (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
 
 export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
   // Initial state
@@ -22,7 +24,6 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
   // Connect to WebSocket server
   connect: () => {
     const socket: Socket = io(SOCKET_URL, {
-      path: '/api/socket',
       transports: ['websocket', 'polling'],
     });
 
@@ -122,7 +123,17 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     // Error handling
     socket.on('error', ({ message }: { message: string }) => {
       console.error('Socket error:', message);
-      alert(`Error: ${message}`);
+      toast.error(message || 'An error occurred');
+    });
+
+    // Commit received acknowledgment
+    socket.on('game:commit_received', () => {
+      console.log('Commit received by server');
+    });
+
+    // Timeout warning
+    socket.on('game:timeout_warning', ({ message }: { message: string }) => {
+      toast(message, { icon: '⚠️', duration: 5000 });
     });
 
     set({ socket });
@@ -181,15 +192,47 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     });
   },
 
-  // Roll dice (player's turn)
-  rollDice: (dice1: number, dice2: number) => {
+  // Roll dice with commit-reveal pattern
+  rollDice: async () => {
     const socket = get().socket;
     if (!socket || !socket.connected) {
-      console.error('Not connected to server');
+      toast.error('Not connected to server');
       return;
     }
 
-    socket.emit('game:roll', { dice1, dice2 });
+    try {
+      // Phase 1: Generate dice and commit
+      const { dice1, dice2, secret, commitHash } = await rollAndCommitDice();
+
+      console.log('Committing dice roll...');
+
+      // Send commit to server
+      socket.emit('game:dice_commit', { commitHash });
+
+      // Wait for commit acknowledgment (with timeout)
+      const commitAck = await new Promise<boolean>((resolve) => {
+        const timeout = setTimeout(() => resolve(false), 5000);
+
+        socket.once('game:commit_received', () => {
+          clearTimeout(timeout);
+          resolve(true);
+        });
+      });
+
+      if (!commitAck) {
+        toast.error('Commit timeout. Please try again.');
+        return;
+      }
+
+      // Phase 2: Reveal dice values
+      console.log('Revealing dice roll...');
+      socket.emit('game:dice_reveal', { dice1, dice2, secret });
+
+      toast.success(`Rolled ${dice1} + ${dice2} = ${dice1 + dice2}`);
+    } catch (error) {
+      console.error('Error rolling dice:', error);
+      toast.error('Failed to roll dice');
+    }
   },
 
   // Mark player as eliminated
