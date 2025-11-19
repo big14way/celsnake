@@ -1,0 +1,32 @@
+{
+  "name": "Ultimate Champion",
+  "description": "Win 1000 games",
+  "image": "ipfs://QmPlaceholder/34.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/34",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Platinum"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Mythic"
+    },
+    {
+      "trait_type": "Wins Required",
+      "value": "1000"
+    },
+    {
+      "trait_type": "Max Supply",
+      "value": "50"
+    },
+    {
+      "trait_type": "Limited Edition",
+      "value": "Yes"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Getting Started",
+  "description": "Play 10 games",
+  "image": "ipfs://QmPlaceholder/2.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/2",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Games Required",
+      "value": "10"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ module.exports = {
       timeout: 120000,
     },
     celoSepolia: {
-      url: "https://forno.celo-sepolia.celo-testnet.org",
+      url: "https://rpc.ankr.com/celo_sepolia",
       accounts: [PRIVATE_KEY],
       chainId: 11142220,
       timeout: 120000,

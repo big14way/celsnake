@@ -1,0 +1,443 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_achievementNFT",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "achievementId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "achievementName",
+        "type": "string"
+      }
+    ],
+    "name": "AchievementEarned",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metric",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "ProgressUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "achievementNFT",
+    "outputs": [
+      {
+        "internalType": "contract SnakeAchievementNFT",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gameContract",
+        "type": "address"
+      }
+    ],
+    "name": "authorizeGame",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "authorizedGames",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "getPlayerDiscount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "getPlayerProgress",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "totalGames",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWins",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentWinStreak",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "longestWinStreak",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalBetAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWinnings",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "multiplayerWins",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tournamentWins",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tournamentParticipations",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "highestScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "firstWin",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct AchievementTracker.PlayerProgress",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "isEligibleForExclusiveTournaments",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "achievementId",
+        "type": "uint256"
+      }
+    ],
+    "name": "mintSpecialAchievement",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "achievementIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "mintSpecialAchievementBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "playerProgress",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalGames",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalWins",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentWinStreak",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "longestWinStreak",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalBetAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalWinnings",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "multiplayerWins",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tournamentWins",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tournamentParticipations",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "highestScore",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "firstWin",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "betAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "recordLoss",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "recordTournamentParticipation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "recordTournamentWin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "betAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "winnings",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "score",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isMultiplayer",
+        "type": "bool"
+      }
+    ],
+    "name": "recordWin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gameContract",
+        "type": "address"
+      }
+    ],
+    "name": "revokeGame",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

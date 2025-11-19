@@ -1,0 +1,24 @@
+{
+  "name": "Veteran",
+  "description": "Play 1000 games",
+  "image": "ipfs://QmPlaceholder/11.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/11",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Silver"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Games Required",
+      "value": "1000"
+    }
+  ]
+}

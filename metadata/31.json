@@ -1,0 +1,32 @@
+{
+  "name": "Grandmaster",
+  "description": "Play 10000 games",
+  "image": "ipfs://QmPlaceholder/31.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/31",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Platinum"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Mythic"
+    },
+    {
+      "trait_type": "Games Required",
+      "value": "10000"
+    },
+    {
+      "trait_type": "Max Supply",
+      "value": "100"
+    },
+    {
+      "trait_type": "Limited Edition",
+      "value": "Yes"
+    }
+  ]
+}

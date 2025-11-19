@@ -1,0 +1,24 @@
+{
+  "name": "High Roller",
+  "description": "Place a bet of 10 CELO or more",
+  "image": "ipfs://QmPlaceholder/9.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/9",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Betting"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Min Bet",
+      "value": "10 CELO"
+    }
+  ]
+}

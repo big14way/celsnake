@@ -1,0 +1,32 @@
+{
+  "name": "Season 1 Champion",
+  "description": "Win Season 1 Championship",
+  "image": "ipfs://QmPlaceholder/41.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/41",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Special"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Championship"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Unique"
+    },
+    {
+      "trait_type": "Season",
+      "value": "1"
+    },
+    {
+      "trait_type": "Max Supply",
+      "value": "1"
+    },
+    {
+      "trait_type": "Limited Edition",
+      "value": "Yes"
+    }
+  ]
+}

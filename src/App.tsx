@@ -7,11 +7,15 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { config } from './wagmi.config';
 import GameContainer from './components/GameContainer';
 import MultiplayerContainer from './components/MultiplayerContainer';
+import PlayerProfile from './components/PlayerProfile';
+import AchievementBrowser from './components/AchievementBrowser';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [mode, setMode] = useState<'single' | 'multi'>('single');
+  const [showProfile, setShowProfile] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   return (
     <WagmiProvider config={config}>
@@ -43,8 +47,8 @@ const App = () => {
             }}
           />
 
-          {/* Mode Toggle */}
-          <div className="fixed top-20 right-4 z-40 flex gap-2">
+          {/* Top Navigation */}
+          <div className="fixed top-20 right-4 z-40 flex gap-2 flex-wrap justify-end">
             <button
               onClick={() => setMode('single')}
               className={`px-4 py-2 rounded-lg font-bold transition-colors ${
@@ -65,10 +69,26 @@ const App = () => {
             >
               Multiplayer 🎮
             </button>
+            <button
+              onClick={() => setShowAchievements(true)}
+              className="px-4 py-2 rounded-lg font-bold bg-yellow-600 text-white hover:bg-yellow-700 transition-colors"
+            >
+              🏆 Achievements
+            </button>
+            <button
+              onClick={() => setShowProfile(true)}
+              className="px-4 py-2 rounded-lg font-bold bg-green-600 text-white hover:bg-green-700 transition-colors"
+            >
+              👤 Profile
+            </button>
           </div>
 
           {/* Render appropriate mode */}
           {mode === 'single' ? <GameContainer /> : <MultiplayerContainer />}
+
+          {/* Achievement Modals */}
+          {showProfile && <PlayerProfile onClose={() => setShowProfile(false)} />}
+          {showAchievements && <AchievementBrowser onClose={() => setShowAchievements(false)} />}
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

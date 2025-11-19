@@ -1,0 +1,24 @@
+{
+  "name": "Committed",
+  "description": "Play 500 games",
+  "image": "ipfs://QmPlaceholder/5.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/5",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Uncommon"
+    },
+    {
+      "trait_type": "Games Required",
+      "value": "500"
+    }
+  ]
+}

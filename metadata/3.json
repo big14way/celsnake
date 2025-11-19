@@ -1,0 +1,24 @@
+{
+  "name": "Regular Player",
+  "description": "Play 50 games",
+  "image": "ipfs://QmPlaceholder/3.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/3",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Games Required",
+      "value": "50"
+    }
+  ]
+}

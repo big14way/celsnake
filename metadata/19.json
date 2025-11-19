@@ -1,0 +1,24 @@
+{
+  "name": "Speed Player",
+  "description": "Complete 100 games in 24 hours",
+  "image": "ipfs://QmPlaceholder/19.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/19",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Silver"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Speed"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Games Required",
+      "value": "100"
+    }
+  ]
+}

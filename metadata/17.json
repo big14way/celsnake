@@ -1,0 +1,24 @@
+{
+  "name": "Snake Survivor",
+  "description": "Land on 10 snakes and still win",
+  "image": "ipfs://QmPlaceholder/17.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/17",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Silver"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Resilience"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Epic"
+    },
+    {
+      "trait_type": "Snakes Survived",
+      "value": "10"
+    }
+  ]
+}

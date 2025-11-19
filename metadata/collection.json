@@ -1,0 +1,8 @@
+{
+  "name": "Celo Snake Game Achievements",
+  "description": "Achievement NFTs for the Celo Snake Game. Earn badges by completing challenges, winning tournaments, and reaching milestones. Higher tier achievements unlock exclusive benefits like fee discounts and tournament access.",
+  "image": "ipfs://QmPlaceholder/collection.png",
+  "external_link": "https://celo-snake.vercel.app",
+  "seller_fee_basis_points": 0,
+  "fee_recipient": "0x0000000000000000000000000000000000000000"
+}

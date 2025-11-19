@@ -1,0 +1,24 @@
+{
+  "name": "First Victory",
+  "description": "Win your first game",
+  "image": "ipfs://QmPlaceholder/1.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/1",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Milestone"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Difficulty",
+      "value": "Easy"
+    }
+  ]
+}

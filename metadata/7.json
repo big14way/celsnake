@@ -1,0 +1,24 @@
+{
+  "name": "On Fire",
+  "description": "Win 5 games in a row",
+  "image": "ipfs://QmPlaceholder/7.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/7",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Win Streak"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Uncommon"
+    },
+    {
+      "trait_type": "Streak Required",
+      "value": "5"
+    }
+  ]
+}

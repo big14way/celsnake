@@ -1,0 +1,32 @@
+{
+  "name": "Hall of Fame",
+  "description": "Top 10 all-time wins",
+  "image": "ipfs://QmPlaceholder/32.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/32",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Platinum"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Leaderboard"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Mythic"
+    },
+    {
+      "trait_type": "Ranking",
+      "value": "Top 10"
+    },
+    {
+      "trait_type": "Max Supply",
+      "value": "50"
+    },
+    {
+      "trait_type": "Limited Edition",
+      "value": "Yes"
+    }
+  ]
+}

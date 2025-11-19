@@ -1,0 +1,28 @@
+{
+  "name": "Grandmaster",
+  "description": "Reach top rank",
+  "image": "ipfs://QmPlaceholder/33.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/33",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Platinum"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Rank"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Mythic"
+    },
+    {
+      "trait_type": "Max Supply",
+      "value": "100"
+    },
+    {
+      "trait_type": "Limited Edition",
+      "value": "Yes"
+    }
+  ]
+}

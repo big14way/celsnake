@@ -1,0 +1,24 @@
+{
+  "name": "Perfect Roll",
+  "description": "Complete game without hitting a snake",
+  "image": "ipfs://QmPlaceholder/6.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/6",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Bronze"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Skill"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Uncommon"
+    },
+    {
+      "trait_type": "Difficulty",
+      "value": "Medium"
+    }
+  ]
+}

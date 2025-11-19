@@ -1,0 +1,32 @@
+{
+  "name": "Tournament Victor",
+  "description": "Win a tournament",
+  "image": "ipfs://QmPlaceholder/22.png",
+  "external_url": "https://celo-snake.vercel.app/achievements/22",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Gold"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Tournament"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Game Mode",
+      "value": "Tournament"
+    },
+    {
+      "trait_type": "Max Supply",
+      "value": "500"
+    },
+    {
+      "trait_type": "Limited Edition",
+      "value": "Yes"
+    }
+  ]
+}
