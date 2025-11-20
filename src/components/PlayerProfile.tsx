@@ -10,6 +10,9 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ onClose }) => {
   const { address } = useAccount();
   const { achievements, discount, isEligible, progress, isLoading } = usePlayerAchievementData();
 
+  // Debug logging
+  console.log('PlayerProfile render:', { address, achievements, discount, isEligible, progress, isLoading });
+
   if (!address) {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
@@ -38,7 +41,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ onClose }) => {
     );
   }
 
-  const totalAchievements = achievements.length;
+  const totalAchievements = achievements?.length || 0;
   const winRate = progress?.totalGames ? ((progress.totalWins / progress.totalGames) * 100).toFixed(1) : '0';
 
   return (
@@ -139,7 +142,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ onClose }) => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto pr-2">
-              {achievements.map((achievement) => {
+              {achievements?.map((achievement) => {
+                if (!achievement) return null;
                 const tierInfo = getTierInfo(achievement.tier);
                 return (
                   <div

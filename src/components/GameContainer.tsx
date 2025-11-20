@@ -159,6 +159,27 @@ const GameContainer = () => {
     localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
   }, [gameHistory]);
 
+  // Handle transaction confirmation
+  useEffect(() => {
+    if (isConfirmed && hash) {
+      // Transaction confirmed - clean up state
+      clearActiveGame();
+      setCashoutPending(false);
+      setTxStatus('Transaction confirmed! ✅');
+
+      // Refetch contract balance and leaderboard
+      refetchContractBalance();
+
+      // Trigger leaderboard refresh
+      window.dispatchEvent(new Event('refreshLeaderboard'));
+
+      // Clear status message after delay
+      setTimeout(() => {
+        setTxStatus(null);
+      }, 3000);
+    }
+  }, [isConfirmed, hash]);
+
   useEffect(() => {
     const saved = localStorage.getItem('activeGame');
     if (saved) {
@@ -328,6 +349,17 @@ const GameContainer = () => {
         profit: 0,
         result: 'lose',
       }]);
+
+      // Record loss in SnakesGameV2 for achievement tracking
+      try {
+        writeContract({
+          ...contractConfig,
+          functionName: 'cashout',
+          args: [BigInt(step), false], // step is the score, false = lost
+        });
+      } catch (e) {
+        console.error('Failed to record loss:', e);
+      }
     } else {
       setAccumulatedMult(newAccumulatedMult);
       setMultHistory(newMultHistory);
@@ -364,12 +396,61 @@ const GameContainer = () => {
     let move = final1 + final2;
     
     const { lose, newProfit, msg } = await animateMove(position, move, path, board);
-    setStep(s => s + 1);
+    const newStep = step + 1;
+    setStep(newStep);
     setLost(lose);
-    setGameActive(!lose && step + 1 < 5);
+
+    // Check if round is finished (5 successful rolls)
+    const roundFinished = !lose && newStep >= 5;
+    setGameActive(!lose && newStep < 5);
+
     const profitStr = newProfit.toFixed(4);
-    setMessage(lose ? msg : (step + 1 >= 5 ? `Round finished! Profit: ${profitStr} ${CELO_NETWORK_INFO.nativeCurrency.symbol}` : `Rolled: ${final1} + ${final2} = ${move}`));
+    setMessage(lose ? msg : (roundFinished ? `Round finished! Profit: ${profitStr} ${CELO_NETWORK_INFO.nativeCurrency.symbol}` : `Rolled: ${final1} + ${final2} = ${move}`));
     setRolling(false);
+
+    // Auto-cashout when round finishes successfully
+    if (roundFinished && !lose) {
+      try {
+        // Play victory sound
+        new Audio('/sounds/Cashout.mp3').play();
+      } catch {}
+
+      // Haptic feedback for victory
+      if (miniPayActive) {
+        triggerHaptic('heavy');
+      }
+
+      // Wait a moment to show the victory message
+      await new Promise(res => setTimeout(res, 1500));
+
+      // Auto-trigger cashout
+      setTxStatus('Cashing out...');
+      setCashoutPending(true);
+
+      try {
+        // SnakesGameV2 expects (score, won) instead of (profit)
+        writeContract({
+          ...contractConfig,
+          functionName: 'cashout',
+          args: [BigInt(newStep), true], // newStep is the final score, true = won
+        });
+
+        setMessage(`Congratulations! Cashed out: ${profitStr} ${CELO_NETWORK_INFO.nativeCurrency.symbol}`);
+
+        setGameHistory((h: any) => [...h, {
+          date: new Date().toLocaleString(),
+          bet,
+          difficulty,
+          mult: accumulatedMult.toFixed(2),
+          profit: profitStr,
+          result: 'win',
+        }]);
+      } catch (e: any) {
+        console.error('Auto-cashout failed:', e);
+        setMessage('Auto-cashout failed. Please click Cashout button.');
+        setGameActive(false); // Keep game inactive but allow manual cashout
+      }
+    }
   };
 
   const handleCashout = async () => {
@@ -386,13 +467,14 @@ const GameContainer = () => {
     
     try {
       const roundedProfit = Number(profit).toFixed(3);
-      
+
+      // SnakesGameV2 expects (score, won) instead of (profit)
       writeContract({
         ...contractConfig,
         functionName: 'cashout',
-        args: [parseEther(roundedProfit)],
+        args: [BigInt(step), true], // step is the score, true = won
       });
-      
+
       try { new Audio('/sounds/Cashout.mp3').play(); } catch {}
       setMessage(`Cashed out: ${roundedProfit} ${CELO_NETWORK_INFO.nativeCurrency.symbol}`);
       clearActiveGame();

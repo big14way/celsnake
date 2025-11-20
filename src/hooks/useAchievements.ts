@@ -175,45 +175,34 @@ export function usePlayerProgress() {
     return { progress: null, isLoading, error, refetch };
   }
 
-  const [
-    totalGames,
-    totalWins,
-    currentWinStreak,
-    longestWinStreak,
-    totalBetAmount,
-    totalWinnings,
-    multiplayerWins,
-    tournamentWins,
-    tournamentParticipations,
-    highestScore,
-    firstWin,
-  ] = data as [
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    bigint,
-    boolean
-  ];
+  // Data is returned as a struct object, not an array
+  const progressData = data as {
+    totalGames: bigint;
+    totalWins: bigint;
+    currentWinStreak: bigint;
+    longestWinStreak: bigint;
+    totalBetAmount: bigint;
+    totalWinnings: bigint;
+    multiplayerWins: bigint;
+    tournamentWins: bigint;
+    tournamentParticipations: bigint;
+    highestScore: bigint;
+    firstWin: boolean;
+  };
 
   return {
     progress: {
-      totalGames: Number(totalGames),
-      totalWins: Number(totalWins),
-      currentWinStreak: Number(currentWinStreak),
-      longestWinStreak: Number(longestWinStreak),
-      totalBetAmount: totalBetAmount.toString(),
-      totalWinnings: totalWinnings.toString(),
-      multiplayerWins: Number(multiplayerWins),
-      tournamentWins: Number(tournamentWins),
-      tournamentParticipations: Number(tournamentParticipations),
-      highestScore: Number(highestScore),
-      firstWin,
+      totalGames: Number(progressData.totalGames),
+      totalWins: Number(progressData.totalWins),
+      currentWinStreak: Number(progressData.currentWinStreak),
+      longestWinStreak: Number(progressData.longestWinStreak),
+      totalBetAmount: progressData.totalBetAmount.toString(),
+      totalWinnings: progressData.totalWinnings.toString(),
+      multiplayerWins: Number(progressData.multiplayerWins),
+      tournamentWins: Number(progressData.tournamentWins),
+      tournamentParticipations: Number(progressData.tournamentParticipations),
+      highestScore: Number(progressData.highestScore),
+      firstWin: progressData.firstWin,
     },
     isLoading,
     error,

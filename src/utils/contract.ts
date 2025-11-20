@@ -1,10 +1,15 @@
 import { parseEther, formatEther } from 'viem';
 import { CURRENT_CHAIN } from '../wagmi.config';
+import { CONTRACT_ADDRESSES } from '../contracts/addresses';
+import SnakesGameV2Abi from '../contracts/SnakesGameV2.json';
 
-// Get contract address from environment variable
-export const CONTRACT_ADDRESS = (import.meta.env.VITE_CONTRACT_ADDRESS || '0x70701f7Cb11B06aD50b468aE71dE60895947e7Ec') as `0x${string}`;
+// Use SnakesGameV2 with achievement tracking
+export const CONTRACT_ADDRESS = CONTRACT_ADDRESSES.SnakesGameV2 as `0x${string}`;
 
-export const CONTRACT_ABI = [
+export const CONTRACT_ABI = SnakesGameV2Abi as typeof SnakesGameV2Abi;
+
+// Legacy ABI for reference (old contract without achievements)
+export const LEGACY_CONTRACT_ABI = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
