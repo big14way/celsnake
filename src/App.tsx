@@ -7,13 +7,14 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { config } from './wagmi.config';
 import GameContainer from './components/GameContainer';
 import MultiplayerContainer from './components/MultiplayerContainer';
+import TournamentContainer from './components/TournamentContainer';
 import PlayerProfile from './components/PlayerProfile';
 import AchievementBrowser from './components/AchievementBrowser';
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [mode, setMode] = useState<'single' | 'multi'>('single');
+  const [mode, setMode] = useState<'single' | 'multi' | 'tournament'>('single');
   const [showProfile, setShowProfile] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
 
@@ -48,7 +49,9 @@ const App = () => {
           />
 
           {/* Render game content first */}
-          {mode === 'single' ? <GameContainer /> : <MultiplayerContainer />}
+          {mode === 'single' && <GameContainer />}
+          {mode === 'multi' && <MultiplayerContainer />}
+          {mode === 'tournament' && <TournamentContainer />}
 
           {/* Bottom Navigation - Mobile Responsive (moved to bottom) */}
           <div className="fixed bottom-4 left-0 right-0 z-30 px-2 sm:px-4">
@@ -76,10 +79,21 @@ const App = () => {
                 <span className="sm:hidden">🎮</span>
               </button>
               <button
+                onClick={() => setMode('tournament')}
+                className={`px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg font-bold transition-colors text-xs sm:text-sm ${
+                  mode === 'tournament'
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                <span className="hidden sm:inline">Tournament</span>
+                <span className="sm:hidden">🏆</span>
+              </button>
+              <button
                 onClick={() => setShowAchievements(true)}
                 className="px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg font-bold bg-yellow-600 text-white hover:bg-yellow-700 transition-colors text-xs sm:text-sm"
               >
-                🏆<span className="hidden md:inline ml-1">Achievements</span>
+                🎖️<span className="hidden md:inline ml-1">Achievements</span>
               </button>
               <button
                 onClick={() => setShowProfile(true)}

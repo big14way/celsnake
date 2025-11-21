@@ -1,0 +1,1021 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "./MultiplayerSnakesGameV2.sol";
+import "./AchievementTracker.sol";
+
+/**
+ * @title TournamentManager
+ * @dev Comprehensive tournament infrastructure for scheduled competitions with brackets and prize pools
+ */
+contract TournamentManager {
+    MultiplayerSnakesGameV2 public multiplayerGame;
+    AchievementTracker public achievementTracker;
+    address public owner;
+    address public admin;
+
+    uint256 public constant MIN_TOURNAMENT_FEE = 0.01 ether;
+    uint256 public constant MAX_PARTICIPANTS = 64;
+    uint256 public constant REGISTRATION_BUFFER = 5 minutes;
+    uint256 public constant MATCH_TIMEOUT = 30 minutes;
+    uint256 public constant HOUSE_FEE_PERCENT = 5;
+
+    enum TournamentType {
+        SingleElimination,
+        DoubleElimination,
+        RoundRobin,
+        Swiss,
+        Ladder
+    }
+
+    enum TournamentStatus {
+        Registration,
+        Starting,
+        InProgress,
+        Finished,
+        Cancelled
+    }
+
+    enum MatchStatus {
+        Pending,
+        InProgress,
+        Completed,
+        Cancelled
+    }
+
+    enum RecurrenceType {
+        None,
+        Daily,
+        Weekly,
+        Monthly
+    }
+
+    struct Tournament {
+        uint256 id;
+        string name;
+        string description;
+        TournamentType tournamentType;
+        TournamentStatus status;
+        RecurrenceType recurrence;
+        uint256 entryFee;
+        uint256 minParticipants;
+        uint256 maxParticipants;
+        uint256 prizePool;
+        uint256 guaranteedPrize; // Minimum prize pool (sponsor funded)
+        uint256 registrationStart;
+        uint256 registrationEnd;
+        uint256 tournamentStart;
+        uint256 createdAt;
+        address creator;
+        address sponsor;
+        bool requiresGoldNFT;
+        MultiplayerSnakesGameV2.Difficulty difficulty;
+        address[] participants;
+        mapping(address => bool) registered;
+        mapping(address => uint256) playerStats; // Total tournament score
+        address[] winners;
+        uint256[] prizes;
+        uint256 currentRound;
+        bool finalized;
+    }
+
+    struct TournamentMatch {
+        uint256 matchId;
+        uint256 tournamentId;
+        uint256 roundNumber;
+        uint256 matchNumber;
+        uint256 roomId; // Reference to multiplayer game room
+        address[] players;
+        address winner;
+        MatchStatus status;
+        uint256 startTime;
+        uint256 endTime;
+        mapping(address => uint256) playerScores;
+    }
+
+    struct TournamentInfo {
+        uint256 id;
+        string name;
+        string description;
+        TournamentType tournamentType;
+        TournamentStatus status;
+        RecurrenceType recurrence;
+        uint256 entryFee;
+        uint256 minParticipants;
+        uint256 maxParticipants;
+        uint256 currentParticipants;
+        uint256 prizePool;
+        uint256 guaranteedPrize;
+        uint256 registrationStart;
+        uint256 registrationEnd;
+        uint256 tournamentStart;
+        address creator;
+        address sponsor;
+        bool requiresGoldNFT;
+        MultiplayerSnakesGameV2.Difficulty difficulty;
+        uint256 currentRound;
+    }
+
+    struct MatchInfo {
+        uint256 matchId;
+        uint256 tournamentId;
+        uint256 roundNumber;
+        uint256 matchNumber;
+        uint256 roomId;
+        address[] players;
+        address winner;
+        MatchStatus status;
+        uint256 startTime;
+    }
+
+    struct PlayerTournamentStats {
+        uint256 tournamentsPlayed;
+        uint256 tournamentsWon;
+        uint256 totalPrizes;
+        uint256 matchesWon;
+        uint256 matchesLost;
+        uint256 bestPlacement;
+        uint256 currentRating;
+    }
+
+    // State variables
+    uint256 public nextTournamentId = 1;
+    uint256 public nextMatchId = 1;
+    mapping(uint256 => Tournament) private tournaments;
+    mapping(uint256 => TournamentMatch) private matches;
+    mapping(uint256 => uint256[]) public tournamentMatches; // tournamentId => matchIds
+    mapping(address => PlayerTournamentStats) public playerStats;
+    mapping(address => uint256[]) public playerTournaments;
+
+    uint256[] public activeTournamentIds;
+    uint256[] public upcomingTournamentIds;
+    uint256[] public finishedTournamentIds;
+
+    // Recurring tournament templates
+    mapping(RecurrenceType => uint256[]) public recurringTemplates;
+
+    // Events
+    event TournamentCreated(
+        uint256 indexed tournamentId,
+        string name,
+        TournamentType tournamentType,
+        uint256 entryFee,
+        uint256 maxParticipants,
+        address creator
+    );
+    event TournamentSponsored(uint256 indexed tournamentId, address sponsor, uint256 amount);
+    event PlayerRegistered(uint256 indexed tournamentId, address indexed player);
+    event PlayerUnregistered(uint256 indexed tournamentId, address indexed player);
+    event TournamentStarted(uint256 indexed tournamentId, uint256 participantCount);
+    event RoundStarted(uint256 indexed tournamentId, uint256 roundNumber, uint256 matchCount);
+    event MatchCreated(uint256 indexed matchId, uint256 indexed tournamentId, uint256 roundNumber, address[] players);
+    event MatchStarted(uint256 indexed matchId, uint256 roomId);
+    event MatchCompleted(uint256 indexed matchId, address winner);
+    event TournamentFinished(uint256 indexed tournamentId, address[] winners, uint256[] prizes);
+    event TournamentCancelled(uint256 indexed tournamentId, string reason);
+    event PrizeDistributed(uint256 indexed tournamentId, address indexed player, uint256 amount, uint256 placement);
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner");
+        _;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == owner || msg.sender == admin, "Only admin");
+        _;
+    }
+
+    modifier tournamentExists(uint256 tournamentId) {
+        require(tournamentId > 0 && tournamentId < nextTournamentId, "Tournament does not exist");
+        _;
+    }
+
+    constructor(address _multiplayerGame, address _achievementTracker) {
+        owner = msg.sender;
+        admin = msg.sender;
+        multiplayerGame = MultiplayerSnakesGameV2(_multiplayerGame);
+        achievementTracker = AchievementTracker(_achievementTracker);
+    }
+
+    /**
+     * @dev Create a new tournament
+     */
+    function createTournament(
+        string calldata _name,
+        string calldata _description,
+        TournamentType _tournamentType,
+        uint256 _entryFee,
+        uint256 _minParticipants,
+        uint256 _maxParticipants,
+        uint256 _registrationStart,
+        uint256 _registrationEnd,
+        uint256 _tournamentStart,
+        bool _requiresGoldNFT,
+        MultiplayerSnakesGameV2.Difficulty _difficulty,
+        RecurrenceType _recurrence
+    ) external payable returns (uint256) {
+        require(bytes(_name).length > 0 && bytes(_name).length <= 100, "Invalid name");
+        require(_entryFee >= MIN_TOURNAMENT_FEE, "Entry fee too low");
+        require(_minParticipants >= 2, "Min participants too low");
+        require(_maxParticipants <= MAX_PARTICIPANTS && _maxParticipants >= _minParticipants, "Invalid max participants");
+        require(_registrationStart >= block.timestamp, "Registration start in past");
+        require(_registrationEnd > _registrationStart, "Invalid registration period");
+        require(_tournamentStart >= _registrationEnd + REGISTRATION_BUFFER, "Tournament start too early");
+
+        // Check if creator is admin for sponsored/recurring tournaments
+        if (msg.value > 0 || _recurrence != RecurrenceType.None) {
+            require(msg.sender == owner || msg.sender == admin, "Only admin can create sponsored/recurring tournaments");
+        }
+
+        uint256 tournamentId = nextTournamentId++;
+        Tournament storage tournament = tournaments[tournamentId];
+
+        tournament.id = tournamentId;
+        tournament.name = _name;
+        tournament.description = _description;
+        tournament.tournamentType = _tournamentType;
+        tournament.status = TournamentStatus.Registration;
+        tournament.recurrence = _recurrence;
+        tournament.entryFee = _entryFee;
+        tournament.minParticipants = _minParticipants;
+        tournament.maxParticipants = _maxParticipants;
+        tournament.guaranteedPrize = msg.value;
+        tournament.prizePool = msg.value;
+        tournament.registrationStart = _registrationStart;
+        tournament.registrationEnd = _registrationEnd;
+        tournament.tournamentStart = _tournamentStart;
+        tournament.createdAt = block.timestamp;
+        tournament.creator = msg.sender;
+        tournament.requiresGoldNFT = _requiresGoldNFT;
+        tournament.difficulty = _difficulty;
+        tournament.currentRound = 0;
+
+        if (msg.value > 0) {
+            tournament.sponsor = msg.sender;
+            emit TournamentSponsored(tournamentId, msg.sender, msg.value);
+        }
+
+        upcomingTournamentIds.push(tournamentId);
+
+        if (_recurrence != RecurrenceType.None) {
+            recurringTemplates[_recurrence].push(tournamentId);
+        }
+
+        emit TournamentCreated(tournamentId, _name, _tournamentType, _entryFee, _maxParticipants, msg.sender);
+        return tournamentId;
+    }
+
+    /**
+     * @dev Register for a tournament
+     */
+    function registerForTournament(uint256 tournamentId) external payable tournamentExists(tournamentId) {
+        Tournament storage tournament = tournaments[tournamentId];
+
+        require(tournament.status == TournamentStatus.Registration, "Registration not open");
+        require(block.timestamp >= tournament.registrationStart, "Registration not started");
+        require(block.timestamp <= tournament.registrationEnd, "Registration ended");
+        require(!tournament.registered[msg.sender], "Already registered");
+        require(tournament.participants.length < tournament.maxParticipants, "Tournament full");
+        require(msg.value == tournament.entryFee, "Incorrect entry fee");
+
+        // Check NFT requirement
+        if (tournament.requiresGoldNFT) {
+            require(
+                achievementTracker.isEligibleForExclusiveTournaments(msg.sender),
+                "Gold+ NFT required"
+            );
+        }
+
+        tournament.participants.push(msg.sender);
+        tournament.registered[msg.sender] = true;
+        tournament.prizePool += msg.value;
+
+        playerTournaments[msg.sender].push(tournamentId);
+        playerStats[msg.sender].tournamentsPlayed++;
+
+        // Record participation in achievement tracker
+        achievementTracker.recordTournamentParticipation(msg.sender);
+
+        emit PlayerRegistered(tournamentId, msg.sender);
+
+        // Auto-start if max participants reached
+        if (tournament.participants.length == tournament.maxParticipants) {
+            _prepareTournamentStart(tournamentId);
+        }
+    }
+
+    /**
+     * @dev Unregister from tournament before it starts
+     */
+    function unregisterFromTournament(uint256 tournamentId) external tournamentExists(tournamentId) {
+        Tournament storage tournament = tournaments[tournamentId];
+
+        require(tournament.status == TournamentStatus.Registration, "Cannot unregister");
+        require(tournament.registered[msg.sender], "Not registered");
+        require(block.timestamp <= tournament.registrationEnd, "Registration ended");
+
+        uint256 entryFee = tournament.entryFee;
+        tournament.prizePool -= entryFee;
+        tournament.registered[msg.sender] = false;
+
+        // Remove from participants array
+        for (uint256 i = 0; i < tournament.participants.length; i++) {
+            if (tournament.participants[i] == msg.sender) {
+                tournament.participants[i] = tournament.participants[tournament.participants.length - 1];
+                tournament.participants.pop();
+                break;
+            }
+        }
+
+        payable(msg.sender).transfer(entryFee);
+        emit PlayerUnregistered(tournamentId, msg.sender);
+    }
+
+    /**
+     * @dev Sponsor a tournament (add to prize pool)
+     */
+    function sponsorTournament(uint256 tournamentId) external payable tournamentExists(tournamentId) {
+        require(msg.value > 0, "Invalid amount");
+        Tournament storage tournament = tournaments[tournamentId];
+
+        tournament.prizePool += msg.value;
+        tournament.guaranteedPrize += msg.value;
+
+        if (tournament.sponsor == address(0)) {
+            tournament.sponsor = msg.sender;
+        }
+
+        emit TournamentSponsored(tournamentId, msg.sender, msg.value);
+    }
+
+    /**
+     * @dev Prepare tournament start (can be called by admin or automatically)
+     */
+    function _prepareTournamentStart(uint256 tournamentId) private {
+        Tournament storage tournament = tournaments[tournamentId];
+        tournament.status = TournamentStatus.Starting;
+    }
+
+    /**
+     * @dev Start tournament and generate first round matches
+     */
+    function startTournament(uint256 tournamentId) external onlyAdmin tournamentExists(tournamentId) {
+        Tournament storage tournament = tournaments[tournamentId];
+
+        require(
+            tournament.status == TournamentStatus.Starting ||
+            (tournament.status == TournamentStatus.Registration && block.timestamp >= tournament.tournamentStart),
+            "Cannot start tournament"
+        );
+        require(tournament.participants.length >= tournament.minParticipants, "Not enough participants");
+
+        tournament.status = TournamentStatus.InProgress;
+        tournament.currentRound = 1;
+
+        // Move to active tournaments
+        _removeFromUpcoming(tournamentId);
+        activeTournamentIds.push(tournamentId);
+
+        // Generate first round matches based on tournament type
+        if (tournament.tournamentType == TournamentType.SingleElimination ||
+            tournament.tournamentType == TournamentType.DoubleElimination) {
+            _generateEliminationRound(tournamentId, tournament.participants, 1, false);
+        } else if (tournament.tournamentType == TournamentType.RoundRobin) {
+            _generateRoundRobinMatches(tournamentId);
+        } else if (tournament.tournamentType == TournamentType.Swiss) {
+            _generateSwissRound(tournamentId, 1);
+        }
+
+        emit TournamentStarted(tournamentId, tournament.participants.length);
+    }
+
+    /**
+     * @dev Generate elimination bracket matches
+     */
+    function _generateEliminationRound(
+        uint256 tournamentId,
+        address[] memory players,
+        uint256 roundNumber,
+        bool isLoserBracket
+    ) private {
+        require(players.length >= 2, "Not enough players");
+
+        uint256[] storage matchIds = tournamentMatches[tournamentId];
+        uint256 matchCount = (players.length + 1) / 2;
+
+        emit RoundStarted(tournamentId, roundNumber, matchCount);
+
+        for (uint256 i = 0; i < matchCount; i++) {
+            uint256 matchId = nextMatchId++;
+            TournamentMatch storage match = matches[matchId];
+
+            match.matchId = matchId;
+            match.tournamentId = tournamentId;
+            match.roundNumber = roundNumber;
+            match.matchNumber = i + 1;
+            match.status = MatchStatus.Pending;
+
+            // Assign players (2 per match, last match might have 1 if odd number)
+            if (i * 2 < players.length) {
+                match.players.push(players[i * 2]);
+            }
+            if (i * 2 + 1 < players.length) {
+                match.players.push(players[i * 2 + 1]);
+            }
+
+            // If only one player, they advance automatically (bye)
+            if (match.players.length == 1) {
+                match.winner = match.players[0];
+                match.status = MatchStatus.Completed;
+            }
+
+            matchIds.push(matchId);
+            emit MatchCreated(matchId, tournamentId, roundNumber, match.players);
+        }
+    }
+
+    /**
+     * @dev Generate round robin matches (everyone plays everyone)
+     */
+    function _generateRoundRobinMatches(uint256 tournamentId) private {
+        Tournament storage tournament = tournaments[tournamentId];
+        address[] memory players = tournament.participants;
+        uint256 playerCount = players.length;
+
+        uint256 matchNumber = 1;
+
+        // Generate all possible pairings
+        for (uint256 i = 0; i < playerCount; i++) {
+            for (uint256 j = i + 1; j < playerCount; j++) {
+                uint256 matchId = nextMatchId++;
+                TournamentMatch storage match = matches[matchId];
+
+                match.matchId = matchId;
+                match.tournamentId = tournamentId;
+                match.roundNumber = 1; // All matches in round robin are "round 1"
+                match.matchNumber = matchNumber++;
+                match.status = MatchStatus.Pending;
+                match.players.push(players[i]);
+                match.players.push(players[j]);
+
+                tournamentMatches[tournamentId].push(matchId);
+                emit MatchCreated(matchId, tournamentId, 1, match.players);
+            }
+        }
+
+        emit RoundStarted(tournamentId, 1, matchNumber - 1);
+    }
+
+    /**
+     * @dev Generate Swiss system round (pair players with similar records)
+     */
+    function _generateSwissRound(uint256 tournamentId, uint256 roundNumber) private {
+        Tournament storage tournament = tournaments[tournamentId];
+        address[] memory players = tournament.participants;
+
+        // Sort players by current tournament score
+        for (uint256 i = 0; i < players.length; i++) {
+            for (uint256 j = i + 1; j < players.length; j++) {
+                if (tournament.playerStats[players[j]] > tournament.playerStats[players[i]]) {
+                    (players[i], players[j]) = (players[j], players[i]);
+                }
+            }
+        }
+
+        // Pair adjacent players in sorted list
+        uint256 matchCount = players.length / 2;
+        emit RoundStarted(tournamentId, roundNumber, matchCount);
+
+        for (uint256 i = 0; i < matchCount; i++) {
+            uint256 matchId = nextMatchId++;
+            TournamentMatch storage match = matches[matchId];
+
+            match.matchId = matchId;
+            match.tournamentId = tournamentId;
+            match.roundNumber = roundNumber;
+            match.matchNumber = i + 1;
+            match.status = MatchStatus.Pending;
+            match.players.push(players[i * 2]);
+            match.players.push(players[i * 2 + 1]);
+
+            tournamentMatches[tournamentId].push(matchId);
+            emit MatchCreated(matchId, tournamentId, roundNumber, match.players);
+        }
+    }
+
+    /**
+     * @dev Submit match result (called by admin or automated system)
+     */
+    function submitMatchResult(
+        uint256 matchId,
+        address winner,
+        uint256[] calldata scores
+    ) external onlyAdmin {
+        TournamentMatch storage match = matches[matchId];
+        require(match.status == MatchStatus.Pending || match.status == MatchStatus.InProgress, "Invalid match status");
+        require(winner != address(0), "Invalid winner");
+
+        bool validWinner = false;
+        for (uint256 i = 0; i < match.players.length; i++) {
+            if (match.players[i] == winner) {
+                validWinner = true;
+            }
+            if (i < scores.length) {
+                match.playerScores[match.players[i]] = scores[i];
+            }
+        }
+        require(validWinner, "Winner not in match");
+
+        match.winner = winner;
+        match.status = MatchStatus.Completed;
+        match.endTime = block.timestamp;
+
+        // Update tournament stats
+        Tournament storage tournament = tournaments[match.tournamentId];
+        tournament.playerStats[winner] += 1;
+
+        // Update player stats
+        for (uint256 i = 0; i < match.players.length; i++) {
+            if (match.players[i] == winner) {
+                playerStats[match.players[i]].matchesWon++;
+            } else {
+                playerStats[match.players[i]].matchesLost++;
+            }
+        }
+
+        emit MatchCompleted(matchId, winner);
+
+        // Check if round/tournament is complete
+        _checkRoundComplete(match.tournamentId, match.roundNumber);
+    }
+
+    /**
+     * @dev Check if current round is complete and advance tournament
+     */
+    function _checkRoundComplete(uint256 tournamentId, uint256 roundNumber) private {
+        Tournament storage tournament = tournaments[tournamentId];
+        uint256[] memory matchIds = tournamentMatches[tournamentId];
+
+        // Check if all matches in this round are complete
+        address[] memory roundWinners = new address[](matchIds.length);
+        uint256 winnerCount = 0;
+
+        for (uint256 i = 0; i < matchIds.length; i++) {
+            TournamentMatch storage match = matches[matchIds[i]];
+            if (match.roundNumber == roundNumber) {
+                if (match.status != MatchStatus.Completed) {
+                    return; // Round not complete
+                }
+                if (match.winner != address(0)) {
+                    roundWinners[winnerCount++] = match.winner;
+                }
+            }
+        }
+
+        // Round is complete
+        if (tournament.tournamentType == TournamentType.SingleElimination) {
+            if (winnerCount == 1) {
+                // Tournament complete - single winner
+                _finalizeTournament(tournamentId);
+            } else {
+                // Generate next round
+                address[] memory nextRoundPlayers = new address[](winnerCount);
+                for (uint256 i = 0; i < winnerCount; i++) {
+                    nextRoundPlayers[i] = roundWinners[i];
+                }
+                tournament.currentRound++;
+                _generateEliminationRound(tournamentId, nextRoundPlayers, tournament.currentRound, false);
+            }
+        } else if (tournament.tournamentType == TournamentType.Swiss) {
+            // Check if we've completed enough rounds (typically log2(players))
+            uint256 targetRounds = _log2(tournament.participants.length);
+            if (roundNumber >= targetRounds) {
+                _finalizeTournament(tournamentId);
+            } else {
+                tournament.currentRound++;
+                _generateSwissRound(tournamentId, tournament.currentRound);
+            }
+        } else if (tournament.tournamentType == TournamentType.RoundRobin) {
+            // Round robin is complete when all matches are done
+            _finalizeTournament(tournamentId);
+        }
+    }
+
+    /**
+     * @dev Finalize tournament and distribute prizes
+     */
+    function _finalizeTournament(uint256 tournamentId) private {
+        Tournament storage tournament = tournaments[tournamentId];
+        require(tournament.status == TournamentStatus.InProgress, "Tournament not in progress");
+
+        tournament.status = TournamentStatus.Finished;
+        tournament.finalized = true;
+
+        // Rank players by tournament score
+        address[] memory rankedPlayers = tournament.participants;
+        for (uint256 i = 0; i < rankedPlayers.length; i++) {
+            for (uint256 j = i + 1; j < rankedPlayers.length; j++) {
+                if (tournament.playerStats[rankedPlayers[j]] > tournament.playerStats[rankedPlayers[i]]) {
+                    (rankedPlayers[i], rankedPlayers[j]) = (rankedPlayers[j], rankedPlayers[i]);
+                }
+            }
+        }
+
+        // Calculate prize distribution (Top 8 or fewer)
+        uint256 payoutCount = rankedPlayers.length > 8 ? 8 : rankedPlayers.length;
+        uint256 houseFee = (tournament.prizePool * HOUSE_FEE_PERCENT) / 100;
+        uint256 distributionPool = tournament.prizePool - houseFee;
+
+        uint256[] memory percentages = new uint256[](8);
+        percentages[0] = 40; // 1st place
+        percentages[1] = 25; // 2nd place
+        percentages[2] = 15; // 3rd place
+        percentages[3] = 10; // 4th place
+        percentages[4] = 5;  // 5th place
+        percentages[5] = 3;  // 6th place
+        percentages[6] = 1;  // 7th place
+        percentages[7] = 1;  // 8th place
+
+        tournament.winners = new address[](payoutCount);
+        tournament.prizes = new uint256[](payoutCount);
+
+        // Distribute prizes
+        for (uint256 i = 0; i < payoutCount; i++) {
+            uint256 prize = (distributionPool * percentages[i]) / 100;
+            tournament.winners[i] = rankedPlayers[i];
+            tournament.prizes[i] = prize;
+
+            if (prize > 0) {
+                payable(rankedPlayers[i]).transfer(prize);
+                playerStats[rankedPlayers[i]].totalPrizes += prize;
+
+                if (i + 1 < playerStats[rankedPlayers[i]].bestPlacement || playerStats[rankedPlayers[i]].bestPlacement == 0) {
+                    playerStats[rankedPlayers[i]].bestPlacement = i + 1;
+                }
+
+                emit PrizeDistributed(tournamentId, rankedPlayers[i], prize, i + 1);
+            }
+        }
+
+        // Record tournament win in achievement tracker
+        if (tournament.winners.length > 0) {
+            achievementTracker.recordTournamentWin(tournament.winners[0]);
+            playerStats[tournament.winners[0]].tournamentsWon++;
+        }
+
+        // Transfer house fee to owner
+        if (houseFee > 0) {
+            payable(owner).transfer(houseFee);
+        }
+
+        // Move to finished tournaments
+        _removeFromActive(tournamentId);
+        finishedTournamentIds.push(tournamentId);
+
+        emit TournamentFinished(tournamentId, tournament.winners, tournament.prizes);
+
+        // Schedule next occurrence if recurring
+        if (tournament.recurrence != RecurrenceType.None) {
+            _scheduleRecurringTournament(tournamentId);
+        }
+    }
+
+    /**
+     * @dev Cancel tournament and refund all participants
+     */
+    function cancelTournament(uint256 tournamentId, string calldata reason) external onlyAdmin tournamentExists(tournamentId) {
+        Tournament storage tournament = tournaments[tournamentId];
+        require(tournament.status != TournamentStatus.Finished, "Tournament already finished");
+
+        tournament.status = TournamentStatus.Cancelled;
+
+        // Refund all participants
+        for (uint256 i = 0; i < tournament.participants.length; i++) {
+            address participant = tournament.participants[i];
+            if (tournament.registered[participant]) {
+                payable(participant).transfer(tournament.entryFee);
+            }
+        }
+
+        // Refund sponsor if any
+        if (tournament.guaranteedPrize > 0 && tournament.sponsor != address(0)) {
+            payable(tournament.sponsor).transfer(tournament.guaranteedPrize);
+        }
+
+        _removeFromActive(tournamentId);
+        _removeFromUpcoming(tournamentId);
+
+        emit TournamentCancelled(tournamentId, reason);
+    }
+
+    /**
+     * @dev Schedule next recurring tournament
+     */
+    function _scheduleRecurringTournament(uint256 templateId) private {
+        Tournament storage template = tournaments[templateId];
+
+        uint256 interval;
+        if (template.recurrence == RecurrenceType.Daily) {
+            interval = 1 days;
+        } else if (template.recurrence == RecurrenceType.Weekly) {
+            interval = 7 days;
+        } else if (template.recurrence == RecurrenceType.Monthly) {
+            interval = 30 days;
+        } else {
+            return;
+        }
+
+        // Create new tournament with same parameters
+        uint256 newStartTime = template.tournamentStart + interval;
+        uint256 newRegStart = newStartTime - 24 hours;
+        uint256 newRegEnd = newStartTime - REGISTRATION_BUFFER;
+
+        // Only admin can call this internal function, so we bypass the admin check
+        uint256 newTournamentId = nextTournamentId++;
+        Tournament storage newTournament = tournaments[newTournamentId];
+
+        newTournament.id = newTournamentId;
+        newTournament.name = template.name;
+        newTournament.description = template.description;
+        newTournament.tournamentType = template.tournamentType;
+        newTournament.status = TournamentStatus.Registration;
+        newTournament.recurrence = template.recurrence;
+        newTournament.entryFee = template.entryFee;
+        newTournament.minParticipants = template.minParticipants;
+        newTournament.maxParticipants = template.maxParticipants;
+        newTournament.guaranteedPrize = template.guaranteedPrize;
+        newTournament.prizePool = template.guaranteedPrize;
+        newTournament.registrationStart = newRegStart;
+        newTournament.registrationEnd = newRegEnd;
+        newTournament.tournamentStart = newStartTime;
+        newTournament.createdAt = block.timestamp;
+        newTournament.creator = template.creator;
+        newTournament.sponsor = template.sponsor;
+        newTournament.requiresGoldNFT = template.requiresGoldNFT;
+        newTournament.difficulty = template.difficulty;
+        newTournament.currentRound = 0;
+
+        upcomingTournamentIds.push(newTournamentId);
+        recurringTemplates[template.recurrence].push(newTournamentId);
+
+        emit TournamentCreated(
+            newTournamentId,
+            newTournament.name,
+            newTournament.tournamentType,
+            newTournament.entryFee,
+            newTournament.maxParticipants,
+            newTournament.creator
+        );
+    }
+
+    /**
+     * @dev Helper: Calculate log2 (for Swiss rounds)
+     */
+    function _log2(uint256 x) private pure returns (uint256) {
+        uint256 result = 0;
+        while (x > 1) {
+            x >>= 1;
+            result++;
+        }
+        return result;
+    }
+
+    /**
+     * @dev Remove tournament from active list
+     */
+    function _removeFromActive(uint256 tournamentId) private {
+        for (uint256 i = 0; i < activeTournamentIds.length; i++) {
+            if (activeTournamentIds[i] == tournamentId) {
+                activeTournamentIds[i] = activeTournamentIds[activeTournamentIds.length - 1];
+                activeTournamentIds.pop();
+                break;
+            }
+        }
+    }
+
+    /**
+     * @dev Remove tournament from upcoming list
+     */
+    function _removeFromUpcoming(uint256 tournamentId) private {
+        for (uint256 i = 0; i < upcomingTournamentIds.length; i++) {
+            if (upcomingTournamentIds[i] == tournamentId) {
+                upcomingTournamentIds[i] = upcomingTournamentIds[upcomingTournamentIds.length - 1];
+                upcomingTournamentIds.pop();
+                break;
+            }
+        }
+    }
+
+    // ========== VIEW FUNCTIONS ==========
+
+    /**
+     * @dev Get tournament info
+     */
+    function getTournamentInfo(uint256 tournamentId) external view tournamentExists(tournamentId) returns (TournamentInfo memory) {
+        Tournament storage tournament = tournaments[tournamentId];
+        return TournamentInfo({
+            id: tournament.id,
+            name: tournament.name,
+            description: tournament.description,
+            tournamentType: tournament.tournamentType,
+            status: tournament.status,
+            recurrence: tournament.recurrence,
+            entryFee: tournament.entryFee,
+            minParticipants: tournament.minParticipants,
+            maxParticipants: tournament.maxParticipants,
+            currentParticipants: tournament.participants.length,
+            prizePool: tournament.prizePool,
+            guaranteedPrize: tournament.guaranteedPrize,
+            registrationStart: tournament.registrationStart,
+            registrationEnd: tournament.registrationEnd,
+            tournamentStart: tournament.tournamentStart,
+            creator: tournament.creator,
+            sponsor: tournament.sponsor,
+            requiresGoldNFT: tournament.requiresGoldNFT,
+            difficulty: tournament.difficulty,
+            currentRound: tournament.currentRound
+        });
+    }
+
+    /**
+     * @dev Get tournament participants
+     */
+    function getTournamentParticipants(uint256 tournamentId) external view tournamentExists(tournamentId) returns (address[] memory) {
+        return tournaments[tournamentId].participants;
+    }
+
+    /**
+     * @dev Get tournament winners and prizes
+     */
+    function getTournamentResults(uint256 tournamentId) external view tournamentExists(tournamentId) returns (address[] memory, uint256[] memory) {
+        Tournament storage tournament = tournaments[tournamentId];
+        require(tournament.finalized, "Tournament not finalized");
+        return (tournament.winners, tournament.prizes);
+    }
+
+    /**
+     * @dev Get all tournament matches
+     */
+    function getTournamentMatches(uint256 tournamentId) external view tournamentExists(tournamentId) returns (MatchInfo[] memory) {
+        uint256[] memory matchIds = tournamentMatches[tournamentId];
+        MatchInfo[] memory matchInfos = new MatchInfo[](matchIds.length);
+
+        for (uint256 i = 0; i < matchIds.length; i++) {
+            TournamentMatch storage match = matches[matchIds[i]];
+            matchInfos[i] = MatchInfo({
+                matchId: match.matchId,
+                tournamentId: match.tournamentId,
+                roundNumber: match.roundNumber,
+                matchNumber: match.matchNumber,
+                roomId: match.roomId,
+                players: match.players,
+                winner: match.winner,
+                status: match.status,
+                startTime: match.startTime
+            });
+        }
+
+        return matchInfos;
+    }
+
+    /**
+     * @dev Get match details
+     */
+    function getMatchInfo(uint256 matchId) external view returns (MatchInfo memory) {
+        TournamentMatch storage match = matches[matchId];
+        return MatchInfo({
+            matchId: match.matchId,
+            tournamentId: match.tournamentId,
+            roundNumber: match.roundNumber,
+            matchNumber: match.matchNumber,
+            roomId: match.roomId,
+            players: match.players,
+            winner: match.winner,
+            status: match.status,
+            startTime: match.startTime
+        });
+    }
+
+    /**
+     * @dev Get active tournaments
+     */
+    function getActiveTournaments() external view returns (TournamentInfo[] memory) {
+        return _getTournamentInfoArray(activeTournamentIds);
+    }
+
+    /**
+     * @dev Get upcoming tournaments
+     */
+    function getUpcomingTournaments() external view returns (TournamentInfo[] memory) {
+        return _getTournamentInfoArray(upcomingTournamentIds);
+    }
+
+    /**
+     * @dev Get finished tournaments
+     */
+    function getFinishedTournaments(uint256 limit) external view returns (TournamentInfo[] memory) {
+        uint256 count = finishedTournamentIds.length > limit ? limit : finishedTournamentIds.length;
+        uint256[] memory recentIds = new uint256[](count);
+
+        // Get most recent tournaments
+        for (uint256 i = 0; i < count; i++) {
+            recentIds[i] = finishedTournamentIds[finishedTournamentIds.length - 1 - i];
+        }
+
+        return _getTournamentInfoArray(recentIds);
+    }
+
+    /**
+     * @dev Get player's tournament stats
+     */
+    function getPlayerStats(address player) external view returns (PlayerTournamentStats memory) {
+        return playerStats[player];
+    }
+
+    /**
+     * @dev Get player's tournament history
+     */
+    function getPlayerTournaments(address player) external view returns (uint256[] memory) {
+        return playerTournaments[player];
+    }
+
+    /**
+     * @dev Helper to convert tournament IDs to info array
+     */
+    function _getTournamentInfoArray(uint256[] memory ids) private view returns (TournamentInfo[] memory) {
+        TournamentInfo[] memory infos = new TournamentInfo[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            Tournament storage tournament = tournaments[ids[i]];
+            infos[i] = TournamentInfo({
+                id: tournament.id,
+                name: tournament.name,
+                description: tournament.description,
+                tournamentType: tournament.tournamentType,
+                status: tournament.status,
+                recurrence: tournament.recurrence,
+                entryFee: tournament.entryFee,
+                minParticipants: tournament.minParticipants,
+                maxParticipants: tournament.maxParticipants,
+                currentParticipants: tournament.participants.length,
+                prizePool: tournament.prizePool,
+                guaranteedPrize: tournament.guaranteedPrize,
+                registrationStart: tournament.registrationStart,
+                registrationEnd: tournament.registrationEnd,
+                tournamentStart: tournament.tournamentStart,
+                creator: tournament.creator,
+                sponsor: tournament.sponsor,
+                requiresGoldNFT: tournament.requiresGoldNFT,
+                difficulty: tournament.difficulty,
+                currentRound: tournament.currentRound
+            });
+        }
+        return infos;
+    }
+
+    // ========== ADMIN FUNCTIONS ==========
+
+    /**
+     * @dev Set admin address
+     */
+    function setAdmin(address _admin) external onlyOwner {
+        require(_admin != address(0), "Invalid address");
+        admin = _admin;
+    }
+
+    /**
+     * @dev Update multiplayer game contract
+     */
+    function setMultiplayerGame(address _multiplayerGame) external onlyOwner {
+        require(_multiplayerGame != address(0), "Invalid address");
+        multiplayerGame = MultiplayerSnakesGameV2(_multiplayerGame);
+    }
+
+    /**
+     * @dev Update achievement tracker
+     */
+    function setAchievementTracker(address _achievementTracker) external onlyOwner {
+        require(_achievementTracker != address(0), "Invalid address");
+        achievementTracker = AchievementTracker(_achievementTracker);
+    }
+
+    /**
+     * @dev Withdraw accumulated fees
+     */
+    function withdraw(uint256 amount) external onlyOwner {
+        require(amount > 0 && amount <= address(this).balance, "Invalid amount");
+        payable(owner).transfer(amount);
+    }
+
+    /**
+     * @dev Transfer ownership
+     */
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Invalid address");
+        owner = newOwner;
+    }
+
+    /**
+     * @dev Fallback to receive ETH
+     */
+    receive() external payable {}
+}

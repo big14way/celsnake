@@ -88,14 +88,41 @@ We believe gaming should reward players for their time and skill, and Celo's tec
 
 ## 🕹️ Features
 
+### Core Gameplay
 - **Dice-Based Gameplay:** Roll two dice to move across the board
 - **Play-to-Earn:** Win CELO by avoiding snakes and collecting multipliers
-- **MiniPay Support:** Seamless integration with Celo's mobile wallet
-- **WalletConnect:** Connect with any Web3 wallet via RainbowKit
-- **Leaderboard:** Compete with other players
 - **Multiple Difficulty Levels:** Easy, Medium, Hard, Expert, Master
 - **Game State Persistence:** Resume your game anytime
 - **Game History:** Track all your past games
+
+### Multiplayer Mode
+- **Real-Time Multiplayer:** Compete with 2-4 players simultaneously
+- **Custom Rooms:** Create private rooms with custom bet amounts
+- **Prize Models:** Winner-takes-all, Proportional split, or Survival bonus
+- **Anti-Cheat System:** Commit-reveal dice rolling pattern
+- **Turn Timeout Protection:** Automatic elimination for inactive players
+
+### 🏆 Tournament System (NEW!)
+- **Scheduled Tournaments:** Daily, weekly, and monthly competitions
+- **Multiple Formats:** Single elimination, double elimination, round robin, Swiss system
+- **Entry Fee-Based:** Guaranteed prize pools with sponsor support
+- **Live Brackets:** Real-time tournament bracket visualization
+- **Leaderboards:** Track standings and player rankings
+- **Prize Distribution:** Automated payouts to top 8 finishers (40%, 25%, 15%, 10%, 5%, 3%, 1%, 1%)
+- **NFT Gating:** Exclusive tournaments for Gold+ NFT holders
+- **Tournament History:** Complete stats and performance tracking
+
+### NFT Achievement System
+- **32 Unique Achievements:** Bronze, Silver, Gold, Platinum, and Special tiers
+- **Auto-Minting:** Achievements automatically minted on milestone completion
+- **Fee Discounts:** NFT holders get up to 50% discount on house fees
+- **Tournament Access:** Gold+ tier unlocks exclusive tournaments
+- **Limited Supply:** Rare achievements with capped supply
+
+### Wallet Integration
+- **MiniPay Support:** Seamless integration with Celo's mobile wallet
+- **WalletConnect:** Connect with any Web3 wallet via RainbowKit
+- **Multi-Wallet Support:** MetaMask, Trust Wallet, Coinbase Wallet, and more
 
 ---
 
@@ -228,26 +255,52 @@ VITE_NETWORK=testnet
 
 ---
 
-## ✨ Smart Contract
+## ✨ Smart Contracts
 
-The game uses a Solidity smart contract deployed on Celo.
+The game uses multiple Solidity smart contracts deployed on Celo.
 
-### Contract Address
+### Deployed Contract Addresses (Celo Sepolia Testnet)
 
-- **Celo Sepolia Testnet:** `0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc`
-- **Celo Mainnet:** TBD
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| **SnakesGameV2** | `0x6315d606bBfcC28d9f037A7bdB1dCb21387cEA73` | Single-player game logic |
+| **MultiplayerSnakesGameV2** | `0x7f59A01F0BfD7970846Db71814c9A17F488CCfcF` | Multiplayer rooms & matches |
+| **SnakeAchievementNFT** | `0x6559B28fd6bEc8ff450D4f654841AADa273ac876` | ERC-1155 achievement NFTs |
+| **AchievementTracker** | `0x85e3569ef3DDEE12Bb68772d2Cf73612e82e39Ea` | Progress tracking & auto-minting |
+| **TournamentManager** | `0x7BE60377E17aD50b289F306996fa31494364c56a` | Tournament brackets & prizes |
 
-**Block Explorer:**  
-View on Celo Explorer: [Testnet Contract](https://explorer.celo.org/alfajores/address/0x9C7af8B9e41555ce384a67f563Fa0d20D1dD9DFc)
+**Block Explorer:**
+View on [Celo Explorer](https://explorer.celo.org/alfajores)
 
 ### Contract Features
 
+#### SnakesGameV2 (Single Player)
 - Place bets in CELO
 - Cash out winnings
 - Reset active bets
 - Change nickname
 - View leaderboard
-- Get contract balance
+
+#### MultiplayerSnakesGameV2
+- Create and join multiplayer rooms
+- Multiple prize distribution models
+- NFT holder benefits (fee discounts)
+- Exclusive tournaments for Gold+ NFT holders
+
+#### TournamentManager
+- Create scheduled tournaments
+- Register and unregister participants
+- Automated bracket generation
+- Prize pool management
+- Sponsor support for guaranteed prizes
+- Real-time standings and leaderboards
+
+#### Achievement System
+- 32 unique achievements across 5 tiers
+- Automatic progress tracking
+- NFT minting on milestone completion
+- Fee discounts for NFT holders (1%-15% per achievement)
+- Tournament eligibility (Gold+ required)
 
 ### Deploying the Contract
 
@@ -344,6 +397,133 @@ Total = (1 + sum of non-2x multipliers) + (2^count of 2x multipliers) - 1
 Example:
 - Collect 1.5x + 2x + 1.2x
 - Total = (1 + 0.5 + 0.2) + (2^1) - 1 = 2.7x
+
+---
+
+## 🏆 Tournament System
+
+### Overview
+
+The Tournament System enables scheduled competitions where players compete for guaranteed prize pools. Tournaments support multiple formats and provide automated bracket generation, real-time standings, and instant prize distribution.
+
+### Tournament Formats
+
+| Format | Description | Best For |
+|--------|-------------|----------|
+| **Single Elimination** | Lose once and you're out | Fast-paced, high stakes |
+| **Double Elimination** | Second chance via loser's bracket | Competitive fairness |
+| **Round Robin** | Everyone plays everyone | Skill-based rankings |
+| **Swiss System** | Pair players with similar records | Large tournaments |
+| **Ladder** | Continuous ranking system | Long-term competition |
+
+### How to Join a Tournament
+
+1. **Navigate to Tournament Mode** - Click the 🏆 Tournament button in the navigation
+2. **Browse Tournaments** - View upcoming and active tournaments
+3. **Check Requirements:**
+   - Entry fee amount
+   - NFT requirements (if any)
+   - Participant limits
+4. **Register** - Pay the entry fee to secure your spot
+5. **Wait for Start** - Tournament begins when full or at scheduled time
+6. **Compete** - Play your matches according to the bracket
+7. **Collect Prizes** - Automated distribution to top 8 finishers
+
+### Prize Distribution
+
+**Top 8 Payout Structure:**
+- 🥇 1st Place: 40% of prize pool
+- 🥈 2nd Place: 25%
+- 🥉 3rd Place: 15%
+- 4th Place: 10%
+- 5th Place: 5%
+- 6th Place: 3%
+- 7th Place: 1%
+- 8th Place: 1%
+- *House Fee: 5%*
+
+### Tournament Features
+
+#### Entry Fees & Prize Pools
+- Entry fees range from 0.01 to 1.0 CELO
+- Prize pool = (Entry Fee × Participants) + Sponsor Bonuses
+- Guaranteed minimum prize pools for sponsored tournaments
+
+#### NFT Gating
+- **Public Tournaments:** Open to all players
+- **Exclusive Tournaments:** Require Gold+ tier achievements
+- NFT holders receive up to 50% discount on house fees
+
+#### Recurring Tournaments
+- **Daily:** Quick 8-16 player brackets
+- **Weekly:** Larger competitions with bigger prizes
+- **Monthly:** Championship events with boosted prize pools
+
+#### Real-Time Features
+- Live bracket visualization
+- Match status updates
+- Tournament chat (coming soon)
+- Spectator mode for completed matches
+
+### Creating a Tournament
+
+**Requirements:**
+- Be designated as admin (contact team)
+- Provide entry fee and participant limits
+- Optional: Add sponsor funds for guaranteed prizes
+
+**Tournament Creation:**
+```typescript
+// Admin dashboard
+{
+  name: "Weekend Championship",
+  type: TournamentType.SingleElimination,
+  entryFee: parseEther("0.05"), // 0.05 CELO
+  maxParticipants: 32,
+  guaranteedPrize: parseEther("2.0"), // Sponsor adds 2 CELO
+  requiresGoldNFT: true,
+  difficulty: Difficulty.Expert
+}
+```
+
+### Tournament Statistics
+
+Track your performance:
+- **Tournaments Played**: Total participation count
+- **Tournaments Won**: 1st place finishes
+- **Total Prizes**: Lifetime earnings
+- **Best Placement**: Highest tournament finish
+- **Win Rate**: Match wins vs losses
+- **Current Rating**: Skill-based ranking (coming soon)
+
+### Technical Details
+
+**Bracket Generation:**
+- Automatic pairing based on tournament type
+- Seeded matchups for fair competition
+- Bye assignments for odd participant counts
+
+**Match Coordination:**
+- Automated room creation for tournament matches
+- Turn-based gameplay with timeouts
+- Server-side result verification
+- Cheating detection and penalties
+
+**Smart Contract Integration:**
+- On-chain tournament registration
+- Decentralized prize pool management
+- Transparent winner selection
+- Automated prize distribution
+
+### Deploying Tournament Contract
+
+```bash
+# Deploy TournamentManager
+npx hardhat run scripts/deploy-tournament.ts --network celo-testnet
+
+# Verify on CeloScan
+npx hardhat verify --network celo-testnet <TOURNAMENT_ADDRESS> <MULTIPLAYER_ADDRESS> <ACHIEVEMENT_TRACKER_ADDRESS>
+```
 
 ### Winning Formula
 
@@ -584,16 +764,25 @@ This project is licensed under the MIT License.
 
 ## 🗺️ Roadmap
 
+### Completed Features
 - [x] Basic game mechanics
 - [x] Smart contract deployment
 - [x] Wallet integration
 - [x] MiniPay support
-- [x] Leaderboard
-- [ ] Multiplayer mode
-- [ ] NFT rewards
-- [ ] Tournament system
-- [ ] Social features (share wins)
+- [x] Leaderboard system
+- [x] Multiplayer mode (2-4 players)
+- [x] NFT achievement system (32 unique achievements)
+- [x] Tournament system (4 bracket formats)
+- [x] Real-time coordination via WebSocket
+- [x] Prize distribution automation
+
+### Upcoming Features
+- [ ] Social features (enhanced sharing)
+- [ ] Tournament spectator mode
+- [ ] Player profiles and stats
 - [ ] Mobile app (React Native)
+- [ ] Cross-chain integration
+- [ ] Community governance
 
 ---
 
