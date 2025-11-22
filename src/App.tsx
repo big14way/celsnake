@@ -10,6 +10,8 @@ import MultiplayerContainer from './components/MultiplayerContainer';
 import TournamentContainer from './components/TournamentContainer';
 import PlayerProfile from './components/PlayerProfile';
 import AchievementBrowser from './components/AchievementBrowser';
+import SocialHub from './components/SocialHub';
+import FriendsPanel from './components/FriendsPanel';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +19,8 @@ const App = () => {
   const [mode, setMode] = useState<'single' | 'multi' | 'tournament'>('single');
   const [showProfile, setShowProfile] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showSocialHub, setShowSocialHub] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
 
   return (
     <WagmiProvider config={config}>
@@ -101,12 +105,20 @@ const App = () => {
               >
                 👤<span className="hidden md:inline ml-1">Profile</span>
               </button>
+              <button
+                onClick={() => setShowSocialHub(true)}
+                className="px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg font-bold bg-pink-600 text-white hover:bg-pink-700 transition-colors text-xs sm:text-sm"
+              >
+                🌐<span className="hidden md:inline ml-1">Social</span>
+              </button>
             </div>
           </div>
 
-          {/* Achievement Modals */}
+          {/* Modals */}
           {showProfile && <PlayerProfile onClose={() => setShowProfile(false)} />}
           {showAchievements && <AchievementBrowser onClose={() => setShowAchievements(false)} />}
+          {showSocialHub && <SocialHub onClose={() => setShowSocialHub(false)} />}
+          {showFriends && <FriendsPanel onClose={() => setShowFriends(false)} />}
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

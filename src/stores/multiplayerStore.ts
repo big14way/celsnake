@@ -30,6 +30,8 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     socket.on('connect', () => {
       console.log('Connected to multiplayer server');
       set({ connected: true, socket });
+      // Expose socket globally for socialStore
+      (window as any).multiplayerSocket = socket;
       get().fetchRooms();
     });
 
