@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "672200021302",
+    "project_id": "celo-snake-game",
+    "storage_bucket": "celo-snake-game.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672200021302:android:9093f37b0d1c42f7348f97",
+        "android_client_info": {
+          "package_name": "com.celosnake.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH3X3JBxEigj625VyV9P9UAYCoVAYMnJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -53,8 +53,8 @@ module.exports = {
         network: "celoSepolia",
         chainId: 11142220,
         urls: {
-          apiURL: "https://explorer.celo.org/celo-sepolia/api",
-          browserURL: "https://explorer.celo.org/celo-sepolia"
+          apiURL: "https://api-sepolia.celoscan.io/api",
+          browserURL: "https://sepolia.celoscan.io"
         }
       },
       {
