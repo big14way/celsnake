@@ -240,18 +240,18 @@ The built files will be in the `dist/` directory.
 
 ## 📜 Smart Contracts
 
-All contracts are deployed on **Celo Sepolia Testnet** (Chain ID: 11142220)
+All contracts are deployed on **Celo Mainnet** (Chain ID: 42220)
 
 ### Deployed Contracts
 
 | Contract | Address | Description |
 |----------|---------|-------------|
-| SnakesGameV2 | `0x6315d606bBfcC28d9f037A7bdB1dCb21387cEA73` | Single-player game logic |
-| MultiplayerSnakesGameV2 | `0x7f59A01F0BfD7970846Db71814c9A17F488CCfcF` | Multiplayer game rooms |
-| TournamentManager | `0x7BE60377E17aD50b289F306996fa31494364c56a` | Tournament system |
-| SnakeAchievementNFT | `0x6559B28fd6bEc8ff450D4f654841AADa273ac876` | Achievement NFTs |
-| AchievementTracker | `0x85e3569ef3DDEE12Bb68772d2Cf73612e82e39Ea` | Achievement tracking |
-| SocialFeatures | `0x445383147Ad5Aba947C1b2aeE6dD607E26dfFCEB` | Social networking |
+| SnakesGameV2 | `0xDd0a88d55df383A6A09ccE8AD1eD3EE2aF465B63` | Single-player game logic |
+| MultiplayerSnakesGameV2 | `0x9B143C2C7A7f3F74FDe53D4c432f9B76024c5d99` | Multiplayer game rooms |
+| TournamentManager | `0x5c0E4e1Cd82C8FE1A0Af2128d61618B4e9574c34` | Tournament system |
+| SnakeAchievementNFT | `0xCeD1E5701E5915C3c658A1AE79D9294BAd497A99` | Achievement NFTs |
+| AchievementTracker | `0x3967c36F5989273f413fcDF7Ed6Fe0f4C191617C` | Achievement tracking |
+| SocialFeatures | `0x6b2Af490bE227a05F4Df79E7cFA28e2B0972581a` | Social networking |
 
 ### Contract Features
 

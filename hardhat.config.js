@@ -1,8 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('dotenv').config();
 
-const PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || "0x0000000000000000000000000000000000000000000000000000000000000000";
-const CELOSCAN_API_KEY = process.env.CELOSCAN_API_KEY || "any_non_empty_string";
+const { vars } = require("hardhat/config");
 
 module.exports = {
   solidity: {
@@ -18,27 +17,28 @@ module.exports = {
   networks: {
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
-      accounts: [PRIVATE_KEY],
+      accounts: [vars.get("DEPLOYER_PRIVATE_KEY")],
       chainId: 44787,
       timeout: 120000,
     },
     celoSepolia: {
       url: "https://rpc.ankr.com/celo_sepolia",
-      accounts: [PRIVATE_KEY],
+      accounts: [vars.get("DEPLOYER_PRIVATE_KEY")],
       chainId: 11142220,
       timeout: 120000,
     },
     celo: {
       url: "https://forno.celo.org",
-      accounts: [PRIVATE_KEY],
+      accounts: [vars.get("DEPLOYER_PRIVATE_KEY")],
       chainId: 42220,
+      timeout: 120000,
     },
   },
   etherscan: {
     apiKey: {
-      alfajores: CELOSCAN_API_KEY,
+      alfajores: vars.get("ETHERSCAN_API_KEY", process.env.CELOSCAN_API_KEY || "any_non_empty_string"),
       celoSepolia: "no_api_key_needed",
-      celo: CELOSCAN_API_KEY,
+      celo: vars.get("ETHERSCAN_API_KEY", process.env.CELOSCAN_API_KEY || "any_non_empty_string"),
     },
     customChains: [
       {

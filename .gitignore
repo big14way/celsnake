@@ -70,6 +70,23 @@ cache/
 artifacts/
 typechain-types/
 
-# Private keys
+# Private keys and secrets
 *.key
 private-key.txt
+.secret
+secrets.json
+*-private-key*
+*.pem
+*.p12
+*.pfx
+
+# Hardhat encrypted vars (keep this secure!)
+# Note: Hardhat vars are encrypted and stored in ~/.hardhat/vars.json
+# Make sure not to commit any unencrypted private keys
+
+# Deployment files with sensitive info
+deployed-addresses-*.json
+.openzeppelin/
+
+# Vercel
+.vercel
