@@ -2,7 +2,18 @@
 
 A mobile-first, blockchain-based snake dice game built on **Celo** with **MiniPay** support. Roll the dice, avoid the snakes, collect multipliers, earn CELO, and connect with friends!
 
-**Live Demo:** [https://celo-snake.vercel.app](https://celo-snake.vercel.app)
+## 🌐 Live on Celo Mainnet
+
+**🎮 Play Now:** [https://celo-snake.vercel.app](https://celo-snake.vercel.app)
+
+**📊 Verify Smart Contracts on Celoscan:**
+- All 6 contracts deployed on **Celo Mainnet (Chain ID: 42220)**
+- [View Deployer Wallet & All Contracts](https://celoscan.io/address/0xCBb2e2fCa3CB099bBDC44cc44E6d262BB5931600)
+- [SnakesGameV2](https://celoscan.io/address/0xDd0a88d55df383A6A09ccE8AD1eD3EE2aF465B63) | [MultiplayerSnakesGameV2](https://celoscan.io/address/0x9B143C2C7A7f3F74FDe53D4c432f9B76024c5d99) | [TournamentManager](https://celoscan.io/address/0x5c0E4e1Cd82C8FE1A0Af2128d61618B4e9574c34)
+- [SnakeAchievementNFT](https://celoscan.io/address/0xCeD1E5701E5915C3c658A1AE79D9294BAd497A99) | [AchievementTracker](https://celoscan.io/address/0x3967c36F5989273f413fcDF7Ed6Fe0f4C191617C) | [SocialFeatures](https://celoscan.io/address/0x6b2Af490bE227a05F4Df79E7cFA28e2B0972581a)
+
+**📱 Mobile Apps:**
+- iOS & Android apps with MiniPay integration (see [mobile/](mobile/) directory)
 
 ---
 
