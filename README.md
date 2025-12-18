@@ -258,11 +258,14 @@ All contracts are deployed on **Celo Mainnet** (Chain ID: 42220)
 | Contract | Address | Description |
 |----------|---------|-------------|
 | SnakesGameV2 | `0xDd0a88d55df383A6A09ccE8AD1eD3EE2aF465B63` | Single-player game logic |
+| **SnakesGameV2WithSelfProtocol** 🔐 | `0xB20206e5B057627f7fC4bc414bec692D05231022` | **Single-player with SELF Protocol verification** |
 | MultiplayerSnakesGameV2 | `0x9B143C2C7A7f3F74FDe53D4c432f9B76024c5d99` | Multiplayer game rooms |
 | TournamentManager | `0x5c0E4e1Cd82C8FE1A0Af2128d61618B4e9574c34` | Tournament system |
 | SnakeAchievementNFT | `0xCeD1E5701E5915C3c658A1AE79D9294BAd497A99` | Achievement NFTs |
 | AchievementTracker | `0x3967c36F5989273f413fcDF7Ed6Fe0f4C191617C` | Achievement tracking |
 | SocialFeatures | `0x6b2Af490bE227a05F4Df79E7cFA28e2B0972581a` | Social networking |
+
+🔐 **NEW: SELF Protocol Integration** - Zero-knowledge proof-based identity verification for enhanced security and proof-of-humanity. [Learn more](SELF_PROTOCOL_INTEGRATION.md)
 
 ### Contract Features
 
